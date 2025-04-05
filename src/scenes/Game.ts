@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { TILE_TYPES } from '../data/tileTypesTest';
+import { TILE_TYPES } from '../data/tileTypes';
 import { TileData, TileType } from '../types';
 import { COLORS, FOG_OF_WAR_DISTANCE, MAP_HEIGHT, MAP_WIDTH, TILE_SIZE } from '../configs/config';
 
@@ -133,10 +133,10 @@ export class Game extends Scene {
         this.placeRubyHole(30)
     }
 
-    placeRubyHole(depth: Number) {
+    placeRubyHole(depth: number) {
         const x2 = Math.floor(Math.random() * 7);
         const y2 = depth;
-        const tileType2 = { tunnelType: '1111', caveType: '0000', biomeType: 'rock', generalType: 'hole', count: 0, locked: false };
+        const tileType2 = { tunnelType: '1111', caveType: '0000', biomeType: 'rock', generalType: 'hole', count: 0, locked: false, x: x2, y: y2 };
         const rotation2 = Math.floor(Math.random() * 4) * 90; // Random rotation in 90 degree increments
         const tile2 = this.add.image(
             x2 * TILE_SIZE + TILE_SIZE / 2,
