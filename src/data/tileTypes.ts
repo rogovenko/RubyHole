@@ -5,7 +5,7 @@ export const TILE_TYPES = [
         caveType: '0000',
         biomeType: 'rock',
         generalType: 'tunnel',
-        count: 10,
+        count: 1
     }, 
     {
         // ТОННЕЛЬ ТРИ СТОРОНЫ
@@ -13,7 +13,7 @@ export const TILE_TYPES = [
         caveType: '0000',
         biomeType: 'rock',
         generalType: 'tunnel',
-        count: 0
+        count: 3
     }, 
     {
         // ТОННЕЛЬ ПОВОРОТ
@@ -21,7 +21,7 @@ export const TILE_TYPES = [
         caveType: '0000',
         biomeType: 'rock',
         generalType: 'tunnel',
-        count: 0
+        count: 2
     }, 
     {
         // ТОННЕЛЬ ПРЯМОЙ
@@ -29,39 +29,39 @@ export const TILE_TYPES = [
         caveType: '0000',
         biomeType: 'rock',
         generalType: 'tunnel',
-        count: 6
+        count: 4
     },
     {
         // ПЕЩЕРА 1 СТОРОНА
         tunnelType: '0000',
         caveType: '1000',
-        biomeType: 'shroom',
+        biomeType: 'rock',
         generalType: 'shroom',
-        count: 0
+        count: 4
     },
     {
         // ПЕЩЕРА 2 СТОРОНЫ
         tunnelType: '0000',
         caveType: '1100',
-        biomeType: 'shroom',
+        biomeType: 'rock',
         generalType: 'shroom',
-        count: 0
+        count: 2
     },
     {
         // ПЕЩЕРА БУХТОЧКА
         tunnelType: '0000',
         caveType: '1101',
-        biomeType: 'shroom',
+        biomeType: 'rock',
         generalType: 'shroom',
-        count: 0
+        count: 1
     },
     {
         // ПЕЩЕРА ВНУТРИ
         tunnelType: '0000',
         caveType: '1111',
-        biomeType: 'shroom',
+        biomeType: 'rock',
         generalType: 'shroom',
-        count: 0
+        count: 1
     },
     {
         // ХОУЛ С 1 ДОРОГОЙ (не нужнр размещать)
