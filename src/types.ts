@@ -2,7 +2,9 @@ export interface TileType {
     tunnelType: string;
     caveType: string;
     generalType: string;
-    locked: boolean
+    locked: boolean;
+    x: number;
+    y: number;
 }
 
 export interface TileData {

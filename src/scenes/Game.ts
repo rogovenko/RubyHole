@@ -4,18 +4,18 @@ import { TileData, TileType } from '../types';
 import { COLORS, FOG_OF_WAR_DISTANCE, MAP_HEIGHT, MAP_WIDTH, TILE_SIZE } from '../configs/config';
 
 
-
 export class Game extends Scene {
     eventEmitter: Phaser.Events.EventEmitter;
     mapContainer: Phaser.GameObjects.Container;
     placedTiles: Map<string, TileData>;
     deck: TileType[];
     currentTile?: Phaser.GameObjects.Image;
-    currentTileCode: TileType = { tunnelType: '1111', caveType: '0000', generalType: 'tunnel', locked: false };
+    currentTileCode: TileType = { tunnelType: '1111', caveType: '0000', generalType: 'tunnel', locked: false, x: 0, y: 0 };
     scrollOffsetY: number = 0;
     gridRects: Map<string, Phaser.GameObjects.Rectangle> = new Map();
     fogContainer: Phaser.GameObjects.Container;
     fogTiles: Map<string, Phaser.GameObjects.Rectangle> = new Map();
+    deckNumber: Phaser.GameObjects.Text;
     private highestFogRow: number = 4; // Start with fog from row 4
 
     constructor() {
@@ -56,6 +56,10 @@ export class Game extends Scene {
         }).setOrigin(0.5);
 
         button.on('pointerdown', () => {
+            if (this.currentTile) {
+                this.currentTile.destroy();
+                this.currentTile = undefined;
+            }
             this.drawNextTile();
         });
     }
@@ -81,7 +85,7 @@ export class Game extends Scene {
         const tilePool: TileType[] = [];
         for (const tileType of TILE_TYPES) {
             for (let i = 0; i < tileType.count; i++) {
-                tilePool.push({...tileType, locked: false});
+                tilePool.push({...tileType, locked: false, x: 0, y: 0});
             }
         }
 
@@ -92,13 +96,30 @@ export class Game extends Scene {
         }
 
         this.deck = [...tilePool];
+        
+        this.deckNumber = this.add.text(650, 350, this.deck.length.toString(), {
+            color: '#000000',
+            fontSize: '20px'
+        }).setOrigin(0.5);
+    }
+
+    updateDeckNumber() {
+        this.deckNumber.setText(this.deck.length.toString());
+    }
+
+    addTilesToDeck(count: number) {
+        for (let i = 0; i < count; i++) {
+            const randomTileType = TILE_TYPES[Math.floor(Math.random() * TILE_TYPES.length)];
+            this.deck.unshift({...randomTileType, locked: false, x: 0, y: 0});
+        }
+        this.updateDeckNumber();
     }
 
     setupInitialTiles() {
         // Place first tile
         const x = 3;
         const y = 0;
-        const tileType = {...TILE_TYPES[0], locked: false};
+        const tileType = {...TILE_TYPES[0], locked: false, x: x, y: y};
         const tile = this.add.image(x * TILE_SIZE, y * TILE_SIZE, tileType.generalType + '_' + tileType.tunnelType).setOrigin(0);
         tile.setDisplaySize(TILE_SIZE, TILE_SIZE);
         this.mapContainer.add(tile);
@@ -112,10 +133,10 @@ export class Game extends Scene {
         this.placeRubyHole(30)
     }
 
-    placeRubyHole(depth: Number) {
+    placeRubyHole(depth: number) {
         const x2 = Math.floor(Math.random() * 7);
         const y2 = depth;
-        const tileType2 = { tunnelType: '1111', caveType: '0000', biomeType: 'rock', generalType: 'hole', count: 0, locked: false };
+        const tileType2 = { tunnelType: '1111', caveType: '0000', biomeType: 'rock', generalType: 'hole', count: 0, locked: false, x: x2, y: y2 };
         const rotation2 = Math.floor(Math.random() * 4) * 90; // Random rotation in 90 degree increments
         const tile2 = this.add.image(
             x2 * TILE_SIZE + TILE_SIZE / 2,
@@ -131,7 +152,7 @@ export class Game extends Scene {
     }
 
     drawNextTile() {
-        if (this.deck.length === 0) return;
+        if (this.deck.length === 0) return
 
         this.currentTileCode = this.deck.pop()!;
         const deckX = 650;
@@ -158,6 +179,8 @@ export class Game extends Scene {
             .setStrokeStyle(3, COLORS.BLUE)
             .setFillStyle(0xffffff, 0.2);
         deckSlot.setDepth(-1);
+
+        this.updateDeckNumber();
     }
 
     handlePointerMove(pointer: Phaser.Input.Pointer) {
@@ -270,10 +293,10 @@ export class Game extends Scene {
                 x, y, sprite: tile, type: this.currentTileCode, rotation: this.currentTile.getData('rotation'), locked: false
             });
 
+            this.currentTileCode.x = x;
+            this.currentTileCode.y = y;
             
-            
-            // Check if the placed tile is a hole
-            // Check neighbors of the placed tile
+            // Это сложная проверка для открытия хоулов
             const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];
             directions.forEach(([dx, dy]) => {
                 const neighborKey = `${x + dx},${y + dy}`;
@@ -303,8 +326,12 @@ export class Game extends Scene {
                     }
                 }
             });
-            
 
+            if(this.currentTileCode.generalType === 'shroom'){
+                let isComplete = this.checkCaveIsComplete(this.currentTileCode, this.currentTile);
+                console.log("isComplete", isComplete)
+            }
+            
             this.updateFogOfWar(y);
 
             this.currentTile.destroy();
@@ -318,6 +345,87 @@ export class Game extends Scene {
             this.currentTile.setData('rotation', rotation % 360);
             this.updateHoverHighlight(pointer);
         }
+    }
+
+    checkCaveIsComplete(tileCode: TileType, tile: Phaser.GameObjects.Image) {
+        // Set to keep track of all tiles we've already checked
+        const checkedTiles = new Set<string>();
+        
+        // Helper function to check a single tile and its neighbors
+        const checkTile = (currentTileCode: TileType, currentTile: Phaser.GameObjects.Image): boolean => {
+            const x = currentTileCode.x;
+            const y = currentTileCode.y;
+            const tileKey = `${x},${y}`;
+            
+            // If we've already checked this tile, return true
+            if (checkedTiles.has(tileKey)) {
+                return true;
+            }
+            
+            // Mark this tile as checked
+            checkedTiles.add(tileKey);
+            
+            // Get the rotation in degrees
+            const rotationDegrees = Phaser.Math.RadToDeg(currentTile.rotation);
+            
+            // Get the rotated cave type for current tile
+            const rotatedCaveType = this.getRotatedType(currentTileCode.caveType, rotationDegrees);
+            
+            const directions = [[0, -1], [1, 0], [0, 1], [-1, 0]]; // Up, Right, Down, Left
+            let isComplete = true;
+            
+            // Check each direction where current tile has a "1"
+            for (let index = 0; index < rotatedCaveType.length; index++) {
+                if (rotatedCaveType[index] === '1') {
+                    const [dx, dy] = directions[index];
+                    const neighborX = x + dx;
+                    const neighborY = y + dy;
+                    
+                    // If the neighbor is outside map boundaries, treat it as a valid cave connection
+                    if (neighborX < 0 || neighborX >= MAP_WIDTH || neighborY < 0 || neighborY >= MAP_HEIGHT) {
+                        continue;
+                    }
+                    
+                    const neighborKey = `${neighborX},${neighborY}`;
+                    const neighborTile = this.placedTiles.get(neighborKey);
+                    
+                    if (!neighborTile || neighborTile.type.generalType !== 'shroom') {
+                        isComplete = false;
+                        break;
+                    }
+                    
+                    // Get rotated type of neighbor
+                    const neighborRotationDegrees = neighborTile.rotation;
+                    const rotatedNeighborType = this.getRotatedType(
+                        neighborTile.type.caveType,
+                        neighborRotationDegrees
+                    );
+                    
+                    // Check if neighbor connects back
+                    const oppositeIndex = (index + 2) % 4;
+                    if (rotatedNeighborType[oppositeIndex] !== '1') {
+                        isComplete = false;
+                        break;
+                    }
+                    
+                    // Recursively check the neighbor tile
+                    if (!checkTile(neighborTile.type, neighborTile.sprite)) {
+                        isComplete = false;
+                        break;
+                    }
+                }
+            }
+            
+            return isComplete;
+        };
+        
+        // Start the recursive check with the initial tile
+        const isComplete = checkTile(tileCode, tile);
+        if(isComplete){
+            console.log("Cave is complete with", checkedTiles.size, "tiles");
+            this.addTilesToDeck(checkedTiles.size);
+        }
+        return isComplete;
     }
 
     handlePointerUp(pointer: Phaser.Input.Pointer) {}
