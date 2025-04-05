@@ -96,7 +96,7 @@ export class Game extends Scene {
 
     setupInitialTiles() {
         // Place first tile
-        const x = 2;
+        const x = 3;
         const y = 0;
         const tileType = TILE_TYPES[0];
         const tile = this.add.image(x * TILE_SIZE, y * TILE_SIZE, tileType.generalType + '_' + tileType.tunnelType).setOrigin(0);
@@ -108,7 +108,7 @@ export class Game extends Scene {
 
 
         // разместить первый хоул
-        const x2 = Math.floor(Math.random() * 5);
+        const x2 = Math.floor(Math.random() * 7);
         const y2 = 6;
         const tileType2 = { tunnelType: '1111', caveType: '0000', biomeType: 'rock', generalType: 'hole', count: 0 };
         const rotation2 = Math.floor(Math.random() * 4) * 90; // Random rotation in 90 degree increments
