@@ -53,9 +53,22 @@ export class Preloader extends Scene
             });
         });
 
-        // RACE IMAGES
-        // this.load.image('human_race', 'assets/images/races/human.png');
-       
+        // TILES
+        this.load.image('tunnel_0000', 'assets/images/tiles/kamni1.png');
+        this.load.image('tunnel_1010', 'assets/images/tiles/kamni2.png');
+        this.load.image('tunnel_1100', 'assets/images/tiles/kamni7.png');
+        this.load.image('tunnel_1110', 'assets/images/tiles/kamni10.png');
+        this.load.image('tunnel_1111', 'assets/images/tiles/kamni12.png');
+
+        this.load.image('shroom_1000', 'assets/images/tiles/griby1.png');
+        this.load.image('shroom_1100', 'assets/images/tiles/griby2.png');
+        this.load.image('shroom_1101', 'assets/images/tiles/griby3.png');
+        this.load.image('shroom_1111', 'assets/images/tiles/griby4.png');
+
+        this.load.image('hole_0100', 'assets/images/tiles/hole1.png');
+        this.load.image('hole_1100', 'assets/images/tiles/hole2.png');
+        this.load.image('hole_0111', 'assets/images/tiles/hole3.png');
+        this.load.image('hole_1111', 'assets/images/tiles/hole4.png');
 
         // ANIMATIONS
         // this.load.atlas('time', 'assets/anim/time.png', 'assets/anim/time.json');
