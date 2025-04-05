@@ -65,10 +65,11 @@ export class Preloader extends Scene
         this.load.image('shroom_1101', 'assets/images/tiles/griby3.png');
         this.load.image('shroom_1111', 'assets/images/tiles/griby4.png');
 
-        this.load.image('hole_0100', 'assets/images/tiles/hole1.png');
-        this.load.image('hole_1100', 'assets/images/tiles/hole2.png');
-        this.load.image('hole_0111', 'assets/images/tiles/hole3.png');
-        this.load.image('hole_1111', 'assets/images/tiles/hole4.png');
+        this.load.image('hole_0000', 'assets/images/tiles/hole1.png');
+        this.load.image('hole_0100', 'assets/images/tiles/hole2.png');
+        this.load.image('hole_1100', 'assets/images/tiles/hole3.png');
+        this.load.image('hole_0111', 'assets/images/tiles/hole4.png');
+        this.load.image('hole_1111', 'assets/images/tiles/hole5.png');
 
         // ANIMATIONS
         // this.load.atlas('time', 'assets/anim/time.png', 'assets/anim/time.json');
