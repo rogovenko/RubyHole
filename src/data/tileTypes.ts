@@ -13,7 +13,7 @@ export const TILE_TYPES = [
         caveType: '0000',
         biomeType: 'rock',
         generalType: 'tunnel',
-        count: 3
+        count: 30
     }, 
     {
         // ТОННЕЛЬ ПОВОРОТ
