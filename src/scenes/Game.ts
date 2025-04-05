@@ -56,6 +56,10 @@ export class Game extends Scene {
         }).setOrigin(0.5);
 
         button.on('pointerdown', () => {
+            if (this.currentTile) {
+                this.currentTile.destroy();
+                this.currentTile = undefined;
+            }
             this.drawNextTile();
         });
     }
@@ -126,7 +130,8 @@ export class Game extends Scene {
     }
 
     drawNextTile() {
-        if (this.deck.length === 0) return;
+        console.log("DECK", this.deck.length)
+        if (this.deck.length === 0) return
 
         this.currentTileCode = this.deck.pop()!;
         const deckX = 650;
