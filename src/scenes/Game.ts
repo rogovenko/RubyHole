@@ -207,18 +207,22 @@ export class Game extends Scene {
         let hasHoleTile = false;
         let adjacentTilesCount = 0;
 
+        let xyHoleTile: string | null = null;
+        let isHoleTileLocked = true;
         dirs.forEach(([dx, dy]) => {
             const neighbor = this.placedTiles.get(`${x + dx},${y + dy}`);
             if (neighbor) {
                 adjacentTilesCount++;
                 if (neighbor.type.generalType === 'hole') {
                     hasHoleTile = true;
+                    xyHoleTile = `${x + dx},${y + dy}`;
+                    isHoleTileLocked = neighbor.locked;
                 }
             }
-        });
+        }); 
 
         // If there's a hole tile, we need at least one more adjacent tile
-        if (hasHoleTile && adjacentTilesCount < 2) {
+        if (hasHoleTile && adjacentTilesCount < 2 && isHoleTileLocked) {
             return false;
         }
 
@@ -260,6 +264,41 @@ export class Game extends Scene {
             this.placedTiles.set(posKey, {
                 x, y, sprite: tile, type: this.currentTileCode, rotation: this.currentTile.getData('rotation'), locked: false
             });
+
+            
+            
+            // Check if the placed tile is a hole
+            // Check neighbors of the placed tile
+            const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+            directions.forEach(([dx, dy]) => {
+                const neighborKey = `${x + dx},${y + dy}`;
+                const neighborTile = this.placedTiles.get(neighborKey);
+                if (neighborTile && neighborTile.type.generalType === 'hole') {
+                    // Lock hole tile if current tile is a tunnel and connects properly
+                    if (this.currentTileCode.generalType === 'tunnel') {
+                        // Get the direction from hole to current tile
+                        const directionIndex = directions.findIndex(([dirX, dirY]) => 
+                            dirX === -dx && dirY === -dy
+                        );
+                        
+                        // Get the rotated tunnel types
+                        const rotatedHoleTunnelType = this.getRotatedType(neighborTile.type.tunnelType, neighborTile.rotation);
+                        const rotatedCurrentTunnelType = this.getRotatedType(this.currentTileCode.tunnelType, this.currentTile?.getData('rotation') || 0);
+                        
+                        // Check if the tunnel exits match in opposite directions
+                        const holeTunnelBit = rotatedHoleTunnelType[directionIndex];
+                        const currentTunnelBit = rotatedCurrentTunnelType[(directionIndex + 2) % 4];
+                        
+                        // Unlock only if both tiles have tunnels connecting
+                        if (holeTunnelBit === '1' && currentTunnelBit === '1') {
+                            // Create a new tile data object with locked=false
+                            const updatedTile = {...neighborTile, locked: false};
+                            this.placedTiles.set(neighborKey, updatedTile);
+                        }
+                    }
+                }
+            });
+            
 
             this.updateFogOfWar(y);
 
