@@ -74,10 +74,6 @@ export class Preloader extends Scene
         // this.load.atlas('time', 'assets/anim/time.png', 'assets/anim/time.json');
     }
 
-
-
-
-
     create ()
     {
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
