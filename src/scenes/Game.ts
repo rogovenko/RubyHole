@@ -11,7 +11,7 @@ export class Game extends Scene {
     placedTiles: Map<string, TileData>;
     deck: TileType[];
     currentTile?: Phaser.GameObjects.Image;
-    currentTileCode: TileType = { tunnelType: '1111', caveType: '0000', generalType: 'tunnel' };
+    currentTileCode: TileType = { tunnelType: '1111', caveType: '0000', generalType: 'tunnel', locked: false };
     scrollOffsetY: number = 0;
     gridRects: Map<string, Phaser.GameObjects.Rectangle> = new Map();
     fogContainer: Phaser.GameObjects.Container;
@@ -78,10 +78,10 @@ export class Game extends Scene {
 
     initDeck() {
         // Create a pool of tiles based on their counts
-        const tilePool: typeof TILE_TYPES = [];
+        const tilePool: TileType[] = [];
         for (const tileType of TILE_TYPES) {
             for (let i = 0; i < tileType.count; i++) {
-                tilePool.push(tileType);
+                tilePool.push({...tileType, locked: false});
             }
         }
 
@@ -98,19 +98,19 @@ export class Game extends Scene {
         // Place first tile
         const x = 3;
         const y = 0;
-        const tileType = TILE_TYPES[0];
+        const tileType = {...TILE_TYPES[0], locked: false};
         const tile = this.add.image(x * TILE_SIZE, y * TILE_SIZE, tileType.generalType + '_' + tileType.tunnelType).setOrigin(0);
         tile.setDisplaySize(TILE_SIZE, TILE_SIZE);
         this.mapContainer.add(tile);
         this.placedTiles.set(`${x},${y}`, {
-            x, y, sprite: tile, type: tileType, rotation: 0,
+            x, y, sprite: tile, type: tileType, rotation: 0, locked: false
         });
 
 
         // разместить первый хоул
         const x2 = Math.floor(Math.random() * 7);
         const y2 = 6;
-        const tileType2 = { tunnelType: '1111', caveType: '0000', biomeType: 'rock', generalType: 'hole', count: 0 };
+        const tileType2 = { tunnelType: '1111', caveType: '0000', biomeType: 'rock', generalType: 'hole', count: 0, locked: false };
         const rotation2 = Math.floor(Math.random() * 4) * 90; // Random rotation in 90 degree increments
         const tile2 = this.add.image(
             x2 * TILE_SIZE + TILE_SIZE / 2, 
@@ -121,7 +121,7 @@ export class Game extends Scene {
         tile2.setRotation(Phaser.Math.DegToRad(rotation2));
         this.mapContainer.add(tile2);
         this.placedTiles.set(`${x2},${y2}`, {
-            x: x2, y: y2, sprite: tile2, type: tileType2, rotation: rotation2,
+            x: x2, y: y2, sprite: tile2, type: tileType2, rotation: rotation2, locked: true
         });
     }
 
@@ -258,7 +258,7 @@ export class Game extends Scene {
             this.mapContainer.add(tile);
 
             this.placedTiles.set(posKey, {
-                x, y, sprite: tile, type: this.currentTileCode, rotation: this.currentTile.getData('rotation')
+                x, y, sprite: tile, type: this.currentTileCode, rotation: this.currentTile.getData('rotation'), locked: false
             });
 
             this.updateFogOfWar(y);

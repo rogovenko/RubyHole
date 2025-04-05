@@ -5,7 +5,7 @@ export const TILE_TYPES = [
         caveType: '0000',
         biomeType: 'rock',
         generalType: 'tunnel',
-        count: 4
+        count: 10,
     }, 
     {
         // ТОННЕЛЬ ТРИ СТОРОНЫ
