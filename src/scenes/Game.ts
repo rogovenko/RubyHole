@@ -16,6 +16,8 @@ export class Game extends Scene {
     fogContainer: Phaser.GameObjects.Container;
     fogTiles: Map<string, Phaser.GameObjects.Rectangle> = new Map();
     deckNumber: Phaser.GameObjects.Text;
+    rubyNumberText: Phaser.GameObjects.Text;
+    rubyNumber: number = 0;
     private highestFogRow: number = 4; // Start with fog from row 4
 
     constructor() {
@@ -46,22 +48,80 @@ export class Game extends Scene {
     }
 
     createUI() {
-        const button = this.add.rectangle(650, 400, 120, 40, 0x4a90e2)
+        const buttonNextTile = this.add.rectangle(650, 400, 120, 40, 0x4a90e2)
             .setInteractive()
             .setOrigin(0.5);
             
-        const buttonText = this.add.text(650, 400, 'NEXT', {
+        const buttonNextTileText = this.add.text(650, 400, 'NEXT', {
             color: '#ffffff',
             fontSize: '20px'
         }).setOrigin(0.5);
 
-        button.on('pointerdown', () => {
+        buttonNextTile.on('pointerdown', () => {
             if (this.currentTile) {
                 this.currentTile.destroy();
                 this.currentTile = undefined;
             }
             this.drawNextTile();
         });
+
+        const buttonRestartGame = this.add.rectangle(650, 460, 120, 40, 0x4a90e2)
+            .setInteractive()
+            .setOrigin(0.5);
+            
+        const buttonRestartGameText = this.add.text(650, 460, 'RESTART', {
+            color: '#ffffff',
+            fontSize: '20px'
+        }).setOrigin(0.5);
+
+        buttonRestartGame.on('pointerdown', () => {
+            this.restartGame();
+        });
+
+        // РУБИНЫ!
+        this.add.image(620, 170, 'ruby_icon')
+            .setScale(0.5)
+            .setOrigin(0.5);
+
+        this.rubyNumberText = this.add.text(710, 170, '0', {
+            color: '#000000',
+            fontSize: '30px',   
+            align: 'left',
+            fixedWidth: 100,
+        }).setOrigin(0.5);
+    }
+
+    addRuby(amount: number) {
+        this.rubyNumber += amount;
+        this.rubyNumberText.setText(this.rubyNumber.toString());
+    }
+
+    restartGame() {
+        // Remove all input listeners
+        this.input.off('pointerdown', this.handlePointerDown, this);
+        this.input.off('pointerup', this.handlePointerUp, this);
+        this.input.off('wheel', this.handleWheel, this);
+        this.input.off('pointermove', this.handlePointerMove, this);
+
+        // Clear all containers and maps
+        this.mapContainer.destroy();
+        this.fogContainer.destroy();
+        this.placedTiles.clear();
+        this.gridRects.clear();
+        this.fogTiles.clear();
+        this.deck = [];
+
+        // Destroy UI elements
+        this.deckNumber.destroy();
+        this.rubyNumberText.destroy();
+
+        // Reset game state
+        this.rubyNumber = 0;
+        this.highestFogRow = 4;
+        this.scrollOffsetY = 0;
+
+        // Restart the scene
+        this.scene.start('Game');
     }
 
     drawMapGrid() {
@@ -287,8 +347,6 @@ export class Game extends Scene {
                 }
             }
 
-            console.log("biomeType", biomeType)
-
             const tile = this.add.image(
                 x * TILE_SIZE + TILE_SIZE / 2,
                 y * TILE_SIZE + TILE_SIZE / 2,
@@ -368,8 +426,15 @@ export class Game extends Scene {
                 if (rotatedNeighborType[oppositeIndex] !== '1') {
                     continue;
                 }else{
+                    if(neighborTile.locked){
+                        const level = LEVELS.find(l => l.depth === neighborTile.y);
+                        if(level){
+                            this.addRuby(level.prize);
+                        }
+                    }
                     isRubyComplete = true;
                     neighborTile.locked = false;
+                    
                 }
             }
         }

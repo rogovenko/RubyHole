@@ -87,6 +87,10 @@ export class Preloader extends Scene
         this.load.image('hole_shell_1100', 'assets/images/tiles/hole3.png');
         this.load.image('hole_shell_0111', 'assets/images/tiles/hole4.png');
         this.load.image('hole_shell_1111', 'assets/images/tiles/hole5.png');
+
+        // UI
+        this.load.image('ruby_icon', 'assets/ui/ruby_icon.png');
+
         // ANIMATIONS
         // this.load.atlas('time', 'assets/anim/time.png', 'assets/anim/time.json');
     }

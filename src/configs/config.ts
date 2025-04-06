@@ -12,15 +12,18 @@ export const COLORS = {
 export const LEVELS = [{
     depth: 6,
     tunnelType: '1111',
-    biomeType: 'rock'
+    biomeType: 'rock',
+    prize: 10,
 },
 {
     depth: 15,
     tunnelType: '0111',
-    biomeType: 'shell'
+    biomeType: 'shell',
+    prize: 20,
 },
 {
     depth: 30,
     tunnelType: '1100',
-    biomeType: 'rock'
+    biomeType: 'rock',
+    prize: 30,
 }]
