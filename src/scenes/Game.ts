@@ -40,6 +40,13 @@ export class Game extends Scene {
         this.scrollOffsetY = -surfaceOffset;
         this.cameras.main.setBackgroundColor("#ffffff");
 
+        // Воспроизведение фоновой музыки
+        const music = this.sound.add('background_music', {
+            volume: 0.4,
+            loop: true
+        });
+        music.play();
+
         this.mapContainer = this.add.container(0, -this.scrollOffsetY);
         this.fogContainer = this.add.container(0, -this.scrollOffsetY);
         this.initDeck();
