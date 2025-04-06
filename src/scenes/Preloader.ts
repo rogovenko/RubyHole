@@ -71,6 +71,16 @@ export class Preloader extends Scene
         this.load.image('hole_0111', 'assets/images/tiles/hole4.png');
         this.load.image('hole_1111', 'assets/images/tiles/hole5.png');
 
+        this.load.image('tunnel_shell_0000', 'assets/images/tiles/pantsir1.png');
+        this.load.image('tunnel_shell_1010', 'assets/images/tiles/pantsir2.png');
+        this.load.image('tunnel_shell_1100', 'assets/images/tiles/pantsir3.png');
+        this.load.image('tunnel_shell_1110', 'assets/images/tiles/pantsir4.png');
+        this.load.image('tunnel_shell_1111', 'assets/images/tiles/pantsir5.png');
+
+        this.load.image('shroom_shell_1000', 'assets/images/tiles/pantsir griby1.png');
+        this.load.image('shroom_shell_1100', 'assets/images/tiles/pantsir griby2.png');
+        this.load.image('shroom_shell_1101', 'assets/images/tiles/pantsir griby3.png');
+        this.load.image('shroom_shell_1111', 'assets/images/tiles/pantsir griby4.png');
         // ANIMATIONS
         // this.load.atlas('time', 'assets/anim/time.png', 'assets/anim/time.json');
     }
