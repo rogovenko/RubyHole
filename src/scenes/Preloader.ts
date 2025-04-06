@@ -105,6 +105,11 @@ export class Preloader extends Scene
         this.load.image('hole_meat_0111', 'assets/images/tiles/hole4.png');
         this.load.image('hole_meat_1111', 'assets/images/tiles/hole5.png');
 
+        // EVENT
+        this.load.image('gnome1', 'assets/images/event/gnome1.png');
+        this.load.image('gnome2', 'assets/images/event/gnome2.png');
+        this.load.image('bubble', 'assets/images/event/bubble.png');
+
         // UI
         this.load.image('ruby_icon', 'assets/ui/ruby_icon.png');
 
