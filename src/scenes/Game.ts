@@ -46,6 +46,7 @@ export class Game extends Scene {
     }
 
     create() {
+        this.add.image(0, 0, 'bg1').setOrigin(0, 0).setDisplaySize(800, 600);
         const surfaceOffset = 129;
         this.scrollOffsetY = -surfaceOffset;
         this.cameras.main.setBackgroundColor("#ffffff");
@@ -57,23 +58,12 @@ export class Game extends Scene {
         });
         this.backgroundMusic.play();
 
-        // Создание кнопки управления музыкой
-        const musicButtonBg = this.add.rectangle(650, 520, 120, 40, 0x4a90e2)
-            .setInteractive()
-
-        const musicButtonText = this.add.text(650, 520, 'MUSIC', {
-            color: '#ffffff',
-            fontSize: '20px'
-        }).setOrigin(0.5)
-        
-        this.musicButton = musicButtonBg;
-        
-        this.musicButton.on('pointerdown', () => {
-            this.toggleMusic();
-        });
-
         this.mapContainer = this.add.container(0, -this.scrollOffsetY);
         this.fogContainer = this.add.container(0, -this.scrollOffsetY);
+
+        // Add background gnomes image to top right corner
+        const bgGnomes = this.add.image(0, -129, 'bg_gnomes').setDisplaySize(448, 129).setOrigin(0, 0);
+        this.mapContainer.add(bgGnomes);
         this.initDeck();
         this.drawMapGrid();
         this.createFogOfWar();
@@ -86,21 +76,18 @@ export class Game extends Scene {
         this.drawNextTile();
         this.createEventScreen();
         this.input.on('pointermove', this.handlePointerMove, this);
+        // this.launchEventScreen(1)
     }
 
     createGameWinScreen() {
         this.gameWinScreenGroup = this.add.group();
-        const gameWinScreen = this.add.rectangle(0, 0, 800, 600, 0x000000)
-            .setOrigin(0, 0)
-            .setAlpha(0.9)
-            .setDepth(1)
-            .setInteractive();
+        const gameWinScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive();
         this.gameWinScreenGroup.add(gameWinScreen);
 
         let gameWinScreenText = this.add.text(400, 100, textData.gameWin[this.currentLang], {
             color: '#ffffff',
             fontSize: '48px'
-        }).setOrigin(0.5).setDepth(1);
+        }).setOrigin(0.5).setDepth(2);
         this.gameWinScreenGroup.add(gameWinScreenText);
 
         let textForWinner = this.add.text(400, 200, textData.gameWinWinner[this.currentLang], {
@@ -109,7 +96,7 @@ export class Game extends Scene {
             fixedWidth: 300,
             align: 'center',
             wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(1);
+        }).setOrigin(0.5).setDepth(2);
         this.gameWinScreenGroup.add(textForWinner);
 
         let ruby_icon = this.add.image(370, 330, 'ruby_icon')
@@ -124,18 +111,18 @@ export class Game extends Scene {
             fixedWidth: 300,
             align: 'center',
             wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(1);
+        }).setOrigin(0.5).setDepth(2);
         this.gameWinScreenGroup.add(this.gameWinRubyNumber);
 
         let buttonRestartGame = this.add.rectangle(400, 400, 120, 40, 0x4a90e2)
             .setInteractive()
             .setOrigin(0.5)
-            .setDepth(1);   
+            .setDepth(2);   
 
         let buttonRestartGameText = this.add.text(400, 400, 'RESTART', {
             color: '#ffffff',
             fontSize: '20px'
-        }).setOrigin(0.5).setDepth(1);
+        }).setOrigin(0.5).setDepth(2);
         this.gameWinScreenGroup.add(buttonRestartGameText);
 
         buttonRestartGame.on('pointerdown', () => {
@@ -145,17 +132,13 @@ export class Game extends Scene {
 
     createGameOverScreen() {
         this.gaveOverScreenGroup = this.add.group();
-        const gaveOverScreen = this.add.rectangle(0, 0, 800, 600, 0x000000)
-            .setOrigin(0, 0)
-            .setAlpha(0.9)
-            .setDepth(1)
-            .setInteractive();
+        const gaveOverScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive();
         this.gaveOverScreenGroup.add(gaveOverScreen);
 
         let gaveOverScreenText = this.add.text(400, 100, textData.gameOver[this.currentLang], {
             color: '#ffffff',
             fontSize: '48px'
-        }).setOrigin(0.5).setDepth(1);
+        }).setOrigin(0.5).setDepth(2);
         this.gaveOverScreenGroup.add(gaveOverScreenText);
 
         let textForLoser = this.add.text(400, 200, textData.gameOverLoser[this.currentLang], {
@@ -170,7 +153,7 @@ export class Game extends Scene {
         let ruby_icon = this.add.image(370, 330, 'ruby_icon')
             .setScale(0.5)
             .setOrigin(0.5)
-            .setDepth(1);
+            .setDepth(2);
         this.gaveOverScreenGroup.add(ruby_icon);
 
         this.gameOverRubyNumber = this.add.text(420, 330, this.rubyNumber.toString(), {
@@ -179,18 +162,18 @@ export class Game extends Scene {
             fixedWidth: 300,
             align: 'center',
             wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(1);
+        }).setOrigin(0.5).setDepth(2);
         this.gaveOverScreenGroup.add(this.gameOverRubyNumber);
 
         let buttonRestartGame = this.add.rectangle(400, 400, 120, 40, 0x4a90e2)
             .setInteractive()
             .setOrigin(0.5)
-            .setDepth(1);   
+            .setDepth(2);   
 
         let buttonRestartGameText = this.add.text(400, 400, 'RESTART', {
             color: '#ffffff',
             fontSize: '20px'
-        }).setOrigin(0.5).setDepth(1);
+        }).setOrigin(0.5).setDepth(2);
         this.gaveOverScreenGroup.add(buttonRestartGameText);
 
         buttonRestartGame.on('pointerdown', () => {
@@ -200,35 +183,29 @@ export class Game extends Scene {
 
     createEventScreen() {
         this.eventScreenGroup = this.add.group();
-        const eventScreen = this.add.rectangle(0, 0, 800, 600, 0x000000)
-            .setOrigin(0, 0)
-            .setAlpha(0.9)
-            .setDepth(1)
-            .setInteractive();
+        const eventScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive();
         this.eventScreenGroup.add(eventScreen);
 
         this.characterLeft = this.add.image(400, 300, 'gnome1')
             .setScale(0.5)
-            .setDepth(1);
+            .setDepth(2);
         this.eventScreenGroup.add(this.characterLeft);
 
         this.characterRight = this.add.image(400, 300, 'gnome2')
             .setScale(0.5)
-            .setDepth(1);
+            .setDepth(2);
         this.eventScreenGroup.add(this.characterRight);
 
         Phaser.Display.Align.In.Center(this.characterLeft, eventScreen);
         Phaser.Display.Align.In.Center(this.characterRight, eventScreen);
-        this.characterLeft.x -= 300;
-        this.characterRight.x += 300;
-        this.characterLeft.y += 100;
-        this.characterRight.y += 100;
+        this.characterLeft.x -= 500;
+        this.characterRight.x += 100;
+        this.characterLeft.y -= 50;
+        this.characterRight.y -= 50;
 
-        this.bubble = this.add.image(400, 300, 'bubble')
-            .setDepth(1);
+        this.bubble = this.add.image(400, 400, 'bubble')
+            .setDepth(2);
         this.eventScreenGroup.add(this.bubble);
-        Phaser.Display.Align.In.Center(this.bubble, eventScreen);
-        this.bubble.y += 100;
 
         this.eventScreenText = this.add.text(400, 400, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', {
             color: '#000000',
@@ -237,7 +214,7 @@ export class Game extends Scene {
             align: 'center',
             wordWrap: { width: 300, useAdvancedWrap: true }
         }).setOrigin(0.5)
-            .setDepth(1);
+            .setDepth(2);
         this.eventScreenGroup.add(this.eventScreenText);
 
         eventScreen.on('pointerdown', () => {
@@ -274,11 +251,14 @@ export class Game extends Scene {
     }
 
     createUI() {
-        const buttonNextTile = this.add.rectangle(650, 400, 120, 40, 0x4a90e2)
+        let axisX = 630;
+        let axisY = 440;
+        let offsetY = 25;
+        const buttonNextTile = this.add.rectangle(axisX, axisY, 120, 40, 0x4a90e2)
             .setInteractive()
             .setOrigin(0.5);
             
-        const buttonNextTileText = this.add.text(650, 400, 'NEXT', {
+        const buttonNextTileText = this.add.text(axisX, axisY, 'NEXT', {
             color: '#ffffff',
             fontSize: '20px'
         }).setOrigin(0.5);
@@ -291,11 +271,12 @@ export class Game extends Scene {
             this.drawNextTile();
         });
 
-        const buttonRestartGame = this.add.rectangle(650, 460, 120, 40, 0x4a90e2)
+        axisY += offsetY;
+        const buttonRestartGame = this.add.rectangle(axisX, axisY + offsetY, 120, 40, 0x4a90e2)
             .setInteractive()
             .setOrigin(0.5);
             
-        const buttonRestartGameText = this.add.text(650, 460, 'RESTART', {
+        const buttonRestartGameText = this.add.text(axisX, axisY + offsetY, 'RESTART', {
             color: '#ffffff',
             fontSize: '20px'
         }).setOrigin(0.5);
@@ -304,13 +285,29 @@ export class Game extends Scene {
             this.restartGame();
         });
 
+        // Создание кнопки управления музыкой
+        axisY += offsetY;
+        const musicButtonBg = this.add.rectangle(axisX, axisY + offsetY*2, 120, 40, 0x4a90e2)
+            .setInteractive()
+
+        const musicButtonText = this.add.text(axisX, axisY + offsetY*2, 'MUSIC', {
+            color: '#ffffff',
+            fontSize: '20px'
+        }).setOrigin(0.5)
+        
+        this.musicButton = musicButtonBg;
+        
+        this.musicButton.on('pointerdown', () => {
+            this.toggleMusic();
+        });
+
         // РУБИНЫ!
-        this.add.image(620, 170, 'ruby_icon')
+        this.add.image(600, 80, 'ruby_icon')
             .setScale(0.5)
             .setOrigin(0.5);
 
-        this.rubyNumberText = this.add.text(710, 170, '0', {
-            color: '#000000',
+        this.rubyNumberText = this.add.text(690, 80, '0', {
+            color: '#ffffff',
             fontSize: '30px',   
             align: 'left',
             fixedWidth: 100,
@@ -365,13 +362,13 @@ export class Game extends Scene {
                 this.gridRects.set(`${x},${y}`, rect);
 
                 // Add empty tile image
-                // const emptyTile = this.add.image(
-                //     x * TILE_SIZE + TILE_SIZE / 2,
-                //     y * TILE_SIZE + TILE_SIZE / 2,
-                //     'empty_tile'
-                // ).setOrigin(0.5);
-                // emptyTile.setDisplaySize(TILE_SIZE, TILE_SIZE);
-                // this.mapContainer.add(emptyTile);
+                const emptyTile = this.add.image(
+                    x * TILE_SIZE + TILE_SIZE / 2,
+                    y * TILE_SIZE + TILE_SIZE / 2,
+                    'empty_tile'
+                ).setOrigin(0.5);
+                emptyTile.setDisplaySize(TILE_SIZE, TILE_SIZE);
+                this.mapContainer.add(emptyTile);
             }
         }
     }
@@ -385,6 +382,7 @@ export class Game extends Scene {
             }
         }
 
+        const shadow = this.add.image(630, 250, 'shadow').setDisplaySize(TILE_SIZE*2.5 + 45, TILE_SIZE*2.5 + 45).setOrigin(0.5).setDepth(0);
         // Shuffle and take tiles from the pool
         for (let i = tilePool.length - 1; i > 0; i--) {
             let chance = Math.random() < 0.1;
@@ -399,8 +397,8 @@ export class Game extends Scene {
 
         this.deck = [...tilePool];
         
-        this.deckNumber = this.add.text(650, 350, this.deck.length.toString(), {
-            color: '#000000',
+        this.deckNumber = this.add.text(630, 370, this.deck.length.toString(), {
+            color: '#ffffff',
             fontSize: '20px'
         }).setOrigin(0.5);
     }
@@ -468,8 +466,8 @@ export class Game extends Scene {
         }
 
         this.currentTileCode = this.deck.pop()!;
-        const deckX = 650;
-        const deckY = 300;
+        const deckX = 630;
+        const deckY = 250;
 
         console.log("currentTileCode", this.currentTileCode)
 
@@ -490,20 +488,28 @@ export class Game extends Scene {
         console.log("tile", this.currentTileCode)
         
         if(this.currentTileCode.generalType === 'small_ruby'){
-            this.currentTile = this.add.image(deckX, deckY, 'rock_ruby')
+            this.currentTile = this.add.image(deckX, deckY, 'rock_ruby').setDepth(1);
             this.currentTileCode.tunnelType = currentCode;
             this.currentTileCode.caveType = currentCode;
         }else{
-            this.currentTile = this.add.image(deckX, deckY, this.currentTileCode.generalType + '_' + "rock" + '_' + currentCode).setInteractive();
+            this.currentTile = this.add.image(deckX, deckY, this.currentTileCode.generalType + '_' + "rock" + '_' + currentCode)
+                .setDepth(1);
         }
-        this.currentTile.setDisplaySize(TILE_SIZE, TILE_SIZE);
+
+        // Add border rectangle behind the tile image
+        // const tileBorder = this.add.rectangle(deckX, deckY, TILE_SIZE, TILE_SIZE)
+        //     .setStrokeStyle(2, 0xffffff)
+        //     .setFillStyle(0x000000, 0);
+        // tileBorder.setDepth(0);
+
+        this.currentTile.setDisplaySize(TILE_SIZE*2.5, TILE_SIZE*2.5);
         this.currentTile.setData('type', this.currentTileCode);
         this.currentTile.setData('rotation', 0);
 
         const deckSlot = this.add.rectangle(deckX, deckY, TILE_SIZE, TILE_SIZE)
             .setStrokeStyle(0, COLORS.BLUE)
             .setFillStyle(0xffffff, 0.2);
-        deckSlot.setDepth(-1);
+        deckSlot.setDepth(0);
 
         this.updateDeckNumber();
     }
