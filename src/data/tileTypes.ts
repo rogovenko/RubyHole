@@ -72,11 +72,11 @@ export const TILE_TYPES = [
         count: 3
     },
     // {
-    //     // ХОУЛ С 1 ДОРОГОЙ (не нужнр размещать)
-    //     tunnelType: '0100',
+    //     // РУБИНЧИК
+    //     tunnelType: '0000',
     //     caveType: '0000',
     //     biomeType: 'rock',
-    //     generalType: 'hole',
-    //     count: 0
+    //     generalType: 'small_ruby',
+    //     count: 6
     // },
 ];
