@@ -1,7 +1,7 @@
 import { Scene } from 'phaser';
 import { TILE_TYPES } from '../data/tileTypes';
 import { Dialogue, TileData, TileType } from '../types';
-import { COLORS, FOG_OF_WAR_DISTANCE, LEVELS, MAP_HEIGHT, MAP_WIDTH, TILE_SIZE } from '../configs/config';
+import { COLORS, FOG_OF_WAR_DISTANCE, LEVELS, MAP_HEIGHT, MAP_WIDTH, MAX_RUBY, RUBY_CHANCE, TILE_SIZE } from '../configs/config';
 import { eventsData } from '../data/events';
 import { textData } from '../data/textData';
 
@@ -32,10 +32,11 @@ export class Game extends Scene {
     gameWinScreenGroup: Phaser.GameObjects.Group;
     gameWinRubyNumber: Phaser.GameObjects.Text;
     currentLevel: number = 1;
-    private highestFogRow: number = 4; // Start with fog from row 4
-    private backgroundMusic: Phaser.Sound.BaseSound;
-    private isMusicPlaying: boolean = true;
-    private musicButton: Phaser.GameObjects.Rectangle;
+    highestFogRow: number = 4; // Start with fog from row 4
+    backgroundMusic: Phaser.Sound.BaseSound;
+    isMusicPlaying: boolean = true;
+    musicButton: Phaser.GameObjects.Rectangle;
+    rubyMax: number = MAX_RUBY;
 
     constructor() {
         super('Game');
@@ -59,12 +60,11 @@ export class Game extends Scene {
         // Создание кнопки управления музыкой
         const musicButtonBg = this.add.rectangle(650, 520, 120, 40, 0x4a90e2)
             .setInteractive()
-            .setDepth(10);
 
         const musicButtonText = this.add.text(650, 520, 'MUSIC', {
             color: '#ffffff',
             fontSize: '20px'
-        }).setOrigin(0.5).setDepth(10);
+        }).setOrigin(0.5)
         
         this.musicButton = musicButtonBg;
         
@@ -363,6 +363,15 @@ export class Game extends Scene {
                 ).setStrokeStyle(0, COLORS.BLUE);
                 this.mapContainer.add(rect);
                 this.gridRects.set(`${x},${y}`, rect);
+
+                // Add empty tile image
+                // const emptyTile = this.add.image(
+                //     x * TILE_SIZE + TILE_SIZE / 2,
+                //     y * TILE_SIZE + TILE_SIZE / 2,
+                //     'empty_tile'
+                // ).setOrigin(0.5);
+                // emptyTile.setDisplaySize(TILE_SIZE, TILE_SIZE);
+                // this.mapContainer.add(emptyTile);
             }
         }
     }
@@ -378,8 +387,14 @@ export class Game extends Scene {
 
         // Shuffle and take tiles from the pool
         for (let i = tilePool.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [tilePool[i], tilePool[j]] = [tilePool[j], tilePool[i]];
+            let chance = Math.random() < 0.1;
+            if(chance && this.rubyMax > 0){
+                tilePool[i].generalType = 'small_ruby';
+                this.rubyMax--;
+            }else{
+                const j = Math.floor(Math.random() * (i + 1));
+                [tilePool[i], tilePool[j]] = [tilePool[j], tilePool[i]];
+            }
         }
 
         this.deck = [...tilePool];
@@ -397,8 +412,14 @@ export class Game extends Scene {
 
     addTilesToDeck(count: number) {
         for (let i = 0; i < count; i++) {
-            const randomTileType = TILE_TYPES[Math.floor(Math.random() * TILE_TYPES.length)];
-            this.deck.unshift({...randomTileType, locked: false, x: 0, y: 0});
+            let chance = Math.random() < RUBY_CHANCE;
+            if(chance && this.rubyMax > 0){
+                this.deck.unshift({tunnelType: '0000', caveType: '0000', generalType: 'small_ruby', locked: false, x: 0, y: 0});
+                this.rubyMax--;
+            }else{
+                const randomTileType = TILE_TYPES[Math.floor(Math.random() * TILE_TYPES.length)];
+                this.deck.unshift({...randomTileType, locked: false, x: 0, y: 0});
+            }
         }
         this.updateDeckNumber();
     }
@@ -450,6 +471,8 @@ export class Game extends Scene {
         const deckX = 650;
         const deckY = 300;
 
+        console.log("currentTileCode", this.currentTileCode)
+
         // определяем это пещеры или туннели
         let currentCode = "0000"
         switch(this.currentTileCode.generalType){
@@ -460,9 +483,19 @@ export class Game extends Scene {
             case 'hole':
                 currentCode = this.currentTileCode.tunnelType;
                 break;
+            case 'small_ruby':
+                currentCode = '0000';
+                break;
         }
-        console.log("name", this.currentTileCode.generalType + '_' + "rock" + '_' + currentCode)
-        this.currentTile = this.add.image(deckX, deckY, this.currentTileCode.generalType + '_' + "rock" + '_' + currentCode).setInteractive();
+        console.log("tile", this.currentTileCode)
+        
+        if(this.currentTileCode.generalType === 'small_ruby'){
+            this.currentTile = this.add.image(deckX, deckY, 'rock_ruby')
+            this.currentTileCode.tunnelType = currentCode;
+            this.currentTileCode.caveType = currentCode;
+        }else{
+            this.currentTile = this.add.image(deckX, deckY, this.currentTileCode.generalType + '_' + "rock" + '_' + currentCode).setInteractive();
+        }
         this.currentTile.setDisplaySize(TILE_SIZE, TILE_SIZE);
         this.currentTile.setData('type', this.currentTileCode);
         this.currentTile.setData('rotation', 0);
@@ -569,6 +602,9 @@ export class Game extends Scene {
                 case 'hole':
                     currentCode = this.currentTileCode.tunnelType;
                     break;
+                case 'small_ruby':
+                    currentCode = '0000';
+                    break;
             }
 
             let biomeType = "rock";
@@ -579,10 +615,12 @@ export class Game extends Scene {
                 }
             }
 
+            console.log("currentTileCode", this.currentTileCode)
+
             const tile = this.add.image(
                 x * TILE_SIZE + TILE_SIZE / 2,
                 y * TILE_SIZE + TILE_SIZE / 2,
-                this.currentTileCode.generalType + '_' + biomeType + '_' + currentCode
+                this.currentTileCode.generalType === 'small_ruby' ? biomeType + '_ruby' : this.currentTileCode.generalType + '_' + biomeType + '_' + currentCode
             )
                 .setOrigin(0.5)  // Set origin to center
                 .setRotation(this.currentTile.rotation);
@@ -607,6 +645,10 @@ export class Game extends Scene {
 
             this.currentTile.destroy();
             this.currentTile = undefined;
+
+            if(this.currentTileCode.generalType === 'small_ruby'){
+                this.addRuby(3);
+            }
             this.drawNextTile();
         }
 

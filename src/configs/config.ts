@@ -2,6 +2,8 @@ export const MAP_WIDTH = 7;
 export const MAP_HEIGHT = 32;
 export const FOG_OF_WAR_DISTANCE = 4;
 export const TILE_SIZE = 64;
+export const MAX_RUBY = 7;
+export const RUBY_CHANCE = 0.05;
 
 export const COLORS = {
     RED: 0xff0000,
