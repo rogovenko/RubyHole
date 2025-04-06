@@ -27,6 +27,9 @@ export class Game extends Scene {
     currentDialogue: Dialogue[] = [];
     currentLang: 'en' | 'ru' = 'en';
     private highestFogRow: number = 4; // Start with fog from row 4
+    private backgroundMusic: Phaser.Sound.BaseSound;
+    private isMusicPlaying: boolean = true;
+    private musicButton: Phaser.GameObjects.Rectangle;
 
     constructor() {
         super('Game');
@@ -39,6 +42,29 @@ export class Game extends Scene {
         const surfaceOffset = 129;
         this.scrollOffsetY = -surfaceOffset;
         this.cameras.main.setBackgroundColor("#ffffff");
+
+        // Воспроизведение фоновой музыки
+        this.backgroundMusic = this.sound.add('background_music', {
+            volume: 0.3,
+            loop: true
+        });
+        this.backgroundMusic.play();
+
+        // Создание кнопки управления музыкой
+        const musicButtonBg = this.add.rectangle(650, 520, 120, 40, 0x4a90e2)
+            .setInteractive()
+            .setDepth(10);
+
+        const musicButtonText = this.add.text(650, 520, 'MUSIC', {
+            color: '#ffffff',
+            fontSize: '20px'
+        }).setOrigin(0.5).setDepth(10);
+        
+        this.musicButton = musicButtonBg;
+        
+        this.musicButton.on('pointerdown', () => {
+            this.toggleMusic();
+        });
 
         this.mapContainer = this.add.container(0, -this.scrollOffsetY);
         this.fogContainer = this.add.container(0, -this.scrollOffsetY);
@@ -654,6 +680,17 @@ export class Game extends Scene {
             }
             
             this.highestFogRow = newFogRow;
+        }
+    }
+
+    toggleMusic() {
+        this.isMusicPlaying = !this.isMusicPlaying;
+        if (this.isMusicPlaying) {
+            this.backgroundMusic.play();
+            this.musicButton.setFillStyle(0x4a90e2); // Синий цвет (включено)
+        } else {
+            this.backgroundMusic.pause();
+            this.musicButton.setFillStyle(0x666666); // Серый цвет (выключено)
         }
     }
 }
