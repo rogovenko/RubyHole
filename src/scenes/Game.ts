@@ -1,7 +1,8 @@
 import { Scene } from 'phaser';
 import { TILE_TYPES } from '../data/tileTypes';
-import { TileData, TileType } from '../types';
+import { Dialogue, TileData, TileType } from '../types';
 import { COLORS, FOG_OF_WAR_DISTANCE, LEVELS, MAP_HEIGHT, MAP_WIDTH, TILE_SIZE } from '../configs/config';
+import { eventsData } from '../data/events';
 
 
 export class Game extends Scene {
@@ -18,6 +19,13 @@ export class Game extends Scene {
     deckNumber: Phaser.GameObjects.Text;
     rubyNumberText: Phaser.GameObjects.Text;
     rubyNumber: number = 0;
+    eventScreenGroup: Phaser.GameObjects.Group;
+    characterLeft: Phaser.GameObjects.Image;
+    characterRight: Phaser.GameObjects.Image;
+    bubble: Phaser.GameObjects.Image;
+    eventScreenText: Phaser.GameObjects.Text;
+    currentDialogue: Dialogue[] = [];
+    currentLang: 'en' | 'ru' = 'en';
     private highestFogRow: number = 4; // Start with fog from row 4
 
     constructor() {
@@ -44,7 +52,79 @@ export class Game extends Scene {
         this.createUI()
         this.setupInitialTiles();
         this.drawNextTile();
+        this.createEventScreen();
         this.input.on('pointermove', this.handlePointerMove, this);
+    }
+
+    createEventScreen() {
+        this.eventScreenGroup = this.add.group();
+        const eventScreen = this.add.rectangle(0, 0, 800, 600, 0x000000)
+            .setOrigin(0, 0)
+            .setAlpha(0.9)
+            .setDepth(1)
+            .setInteractive();
+        this.eventScreenGroup.add(eventScreen);
+
+        this.characterLeft = this.add.image(400, 300, 'gnome1')
+            .setScale(0.5)
+            .setDepth(1);
+        this.eventScreenGroup.add(this.characterLeft);
+
+        this.characterRight = this.add.image(400, 300, 'gnome2')
+            .setScale(0.5)
+            .setDepth(1);
+        this.eventScreenGroup.add(this.characterRight);
+
+        Phaser.Display.Align.In.Center(this.characterLeft, eventScreen);
+        Phaser.Display.Align.In.Center(this.characterRight, eventScreen);
+        this.characterLeft.x -= 300;
+        this.characterRight.x += 300;
+        this.characterLeft.y += 100;
+        this.characterRight.y += 100;
+
+        this.bubble = this.add.image(400, 300, 'bubble')
+            .setDepth(1);
+        this.eventScreenGroup.add(this.bubble);
+        Phaser.Display.Align.In.Center(this.bubble, eventScreen);
+        this.bubble.y += 100;
+
+        this.eventScreenText = this.add.text(400, 400, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', {
+            color: '#000000',
+            fontSize: '24px',
+            fixedWidth: 300,
+            align: 'center',
+            wordWrap: { width: 300, useAdvancedWrap: true }
+        }).setOrigin(0.5)
+            .setDepth(1);
+        this.eventScreenGroup.add(this.eventScreenText);
+
+        eventScreen.on('pointerdown', () => {
+            this.nextDialogueLine();
+        });
+
+        this.eventScreenGroup.setVisible(false);
+    }
+
+    launchEventScreen(id: number) {
+        this.eventScreenGroup.setVisible(true);
+        this.currentDialogue = eventsData[id].dialogue;
+        this.nextDialogueLine();
+    }
+
+    nextDialogueLine() {
+        if (this.currentDialogue.length === 0){
+            this.eventScreenGroup.setVisible(false);
+            return;
+        }
+        const dialogue = this.currentDialogue.shift();
+        if (!dialogue) return;
+        this.eventScreenText.setText(dialogue.text[this.currentLang]);
+        const centerX = (this.characterLeft.x + this.characterRight.x) / 2;
+        if(dialogue.character !== 'left'){
+            this.bubble.setScale(-1, 1);
+        }else{
+            this.bubble.setScale(1, 1);
+        }
     }
 
     createUI() {
@@ -106,6 +186,7 @@ export class Game extends Scene {
         // Clear all containers and maps
         this.mapContainer.destroy();
         this.fogContainer.destroy();
+        this.eventScreenGroup.destroy();
         this.placedTiles.clear();
         this.gridRects.clear();
         this.fogTiles.clear();
@@ -430,6 +511,7 @@ export class Game extends Scene {
                         const level = LEVELS.find(l => l.depth === neighborTile.y);
                         if(level){
                             this.addRuby(level.prize);
+                            this.launchEventScreen(level.eventId);
                         }
                     }
                     isRubyComplete = true;

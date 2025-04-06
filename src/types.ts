@@ -15,3 +15,22 @@ export interface TileData {
     rotation: number;
     locked: boolean;
 }
+
+export interface EventData {
+    id: number;
+    dialogue: Dialogue[];
+}
+
+export interface Dialogue {
+    text: TextLang;
+    character: string;
+}
+
+export interface TextLang {
+    en: string;
+    ru: string;
+    hint: string;
+}
+
+
+

@@ -9,21 +9,25 @@ export const COLORS = {
     BLUE: 0x0000ff,
 }
 
-export const LEVELS = [{
+export const LEVELS = [
+{
     depth: 6,
     tunnelType: '1111',
     biomeType: 'rock',
     prize: 10,
+    eventId: 1,
 },
 {
     depth: 15,
     tunnelType: '0111',
     biomeType: 'shell',
     prize: 20,
+    eventId: 2,
 },
 {
     depth: 30,
     tunnelType: '1100',
     biomeType: 'rock',
     prize: 30,
+    eventId: 3,
 }]
