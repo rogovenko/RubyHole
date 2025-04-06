@@ -3,6 +3,7 @@ import { TILE_TYPES } from '../data/tileTypes';
 import { Dialogue, TileData, TileType } from '../types';
 import { COLORS, FOG_OF_WAR_DISTANCE, LEVELS, MAP_HEIGHT, MAP_WIDTH, TILE_SIZE } from '../configs/config';
 import { eventsData } from '../data/events';
+import { textData } from '../data/textData';
 
 
 export class Game extends Scene {
@@ -26,6 +27,11 @@ export class Game extends Scene {
     eventScreenText: Phaser.GameObjects.Text;
     currentDialogue: Dialogue[] = [];
     currentLang: 'en' | 'ru' = 'en';
+    gaveOverScreenGroup: Phaser.GameObjects.Group;
+    gameOverRubyNumber: Phaser.GameObjects.Text;
+    gameWinScreenGroup: Phaser.GameObjects.Group;
+    gameWinRubyNumber: Phaser.GameObjects.Text;
+    currentLevel: number = 1;
     private highestFogRow: number = 4; // Start with fog from row 4
 
     constructor() {
@@ -54,6 +60,116 @@ export class Game extends Scene {
         this.drawNextTile();
         this.createEventScreen();
         this.input.on('pointermove', this.handlePointerMove, this);
+    }
+
+    createGameWinScreen() {
+        this.gameWinScreenGroup = this.add.group();
+        const gameWinScreen = this.add.rectangle(0, 0, 800, 600, 0x000000)
+            .setOrigin(0, 0)
+            .setAlpha(0.9)
+            .setDepth(1)
+            .setInteractive();
+        this.gameWinScreenGroup.add(gameWinScreen);
+
+        let gameWinScreenText = this.add.text(400, 100, textData.gameWin[this.currentLang], {
+            color: '#ffffff',
+            fontSize: '48px'
+        }).setOrigin(0.5).setDepth(1);
+        this.gameWinScreenGroup.add(gameWinScreenText);
+
+        let textForWinner = this.add.text(400, 200, textData.gameWinWinner[this.currentLang], {
+            color: '#ffffff',
+            fontSize: '24px',
+            fixedWidth: 300,
+            align: 'center',
+            wordWrap: { width: 300, useAdvancedWrap: true }
+        }).setOrigin(0.5).setDepth(1);
+        this.gameWinScreenGroup.add(textForWinner);
+
+        let ruby_icon = this.add.image(370, 330, 'ruby_icon')
+            .setScale(0.5)
+            .setOrigin(0.5)
+            .setDepth(1);
+        this.gameWinScreenGroup.add(ruby_icon);
+
+        this.gameWinRubyNumber = this.add.text(420, 330, this.rubyNumber.toString(), {
+            color: '#ffffff',
+            fontSize: '30px',
+            fixedWidth: 300,
+            align: 'center',
+            wordWrap: { width: 300, useAdvancedWrap: true }
+        }).setOrigin(0.5).setDepth(1);
+        this.gameWinScreenGroup.add(this.gameWinRubyNumber);
+
+        let buttonRestartGame = this.add.rectangle(400, 400, 120, 40, 0x4a90e2)
+            .setInteractive()
+            .setOrigin(0.5)
+            .setDepth(1);   
+
+        let buttonRestartGameText = this.add.text(400, 400, 'RESTART', {
+            color: '#ffffff',
+            fontSize: '20px'
+        }).setOrigin(0.5).setDepth(1);
+        this.gameWinScreenGroup.add(buttonRestartGameText);
+
+        buttonRestartGame.on('pointerdown', () => {
+            this.restartGame();
+        });
+    }
+
+    createGameOverScreen() {
+        this.gaveOverScreenGroup = this.add.group();
+        const gaveOverScreen = this.add.rectangle(0, 0, 800, 600, 0x000000)
+            .setOrigin(0, 0)
+            .setAlpha(0.9)
+            .setDepth(1)
+            .setInteractive();
+        this.gaveOverScreenGroup.add(gaveOverScreen);
+
+        let gaveOverScreenText = this.add.text(400, 100, textData.gameOver[this.currentLang], {
+            color: '#ffffff',
+            fontSize: '48px'
+        }).setOrigin(0.5).setDepth(1);
+        this.gaveOverScreenGroup.add(gaveOverScreenText);
+
+        let textForLoser = this.add.text(400, 200, textData.gameOverLoser[this.currentLang], {
+            color: '#ffffff',
+            fontSize: '24px',
+            fixedWidth: 300,
+            align: 'center',
+            wordWrap: { width: 300, useAdvancedWrap: true }
+        }).setOrigin(0.5).setDepth(1);
+        this.gaveOverScreenGroup.add(textForLoser);
+
+        let ruby_icon = this.add.image(370, 330, 'ruby_icon')
+            .setScale(0.5)
+            .setOrigin(0.5)
+            .setDepth(1);
+        this.gaveOverScreenGroup.add(ruby_icon);
+
+        this.gameOverRubyNumber = this.add.text(420, 330, this.rubyNumber.toString(), {
+            color: '#ffffff',
+            fontSize: '30px',
+            fixedWidth: 300,
+            align: 'center',
+            wordWrap: { width: 300, useAdvancedWrap: true }
+        }).setOrigin(0.5).setDepth(1);
+        this.gaveOverScreenGroup.add(this.gameOverRubyNumber);
+
+        let buttonRestartGame = this.add.rectangle(400, 400, 120, 40, 0x4a90e2)
+            .setInteractive()
+            .setOrigin(0.5)
+            .setDepth(1);   
+
+        let buttonRestartGameText = this.add.text(400, 400, 'RESTART', {
+            color: '#ffffff',
+            fontSize: '20px'
+        }).setOrigin(0.5).setDepth(1);
+        this.gaveOverScreenGroup.add(buttonRestartGameText);
+
+        buttonRestartGame.on('pointerdown', () => {
+            this.restartGame();
+        });
     }
 
     createEventScreen() {
@@ -106,6 +222,7 @@ export class Game extends Scene {
     }
 
     launchEventScreen(id: number) {
+        this.currentLevel = id;
         this.eventScreenGroup.setVisible(true);
         this.currentDialogue = eventsData[id].dialogue;
         this.nextDialogueLine();
@@ -114,6 +231,9 @@ export class Game extends Scene {
     nextDialogueLine() {
         if (this.currentDialogue.length === 0){
             this.eventScreenGroup.setVisible(false);
+            if(this.currentLevel === 3){
+                this.createGameWinScreen();
+            }
             return;
         }
         const dialogue = this.currentDialogue.shift();
@@ -245,7 +365,8 @@ export class Game extends Scene {
     }
 
     updateDeckNumber() {
-        this.deckNumber.setText(this.deck.length.toString());
+        let num = this.deck.length + 1;
+        this.deckNumber.setText(num.toString());
     }
 
     addTilesToDeck(count: number) {
@@ -293,7 +414,11 @@ export class Game extends Scene {
     }
 
     drawNextTile() {
-        if (this.deck.length === 0) return
+        console.log("deck.length", this.deck.length)
+        if (this.deck.length === 0){
+            this.createGameOverScreen();
+            return;
+        }
 
         this.currentTileCode = this.deck.pop()!;
         const deckX = 650;

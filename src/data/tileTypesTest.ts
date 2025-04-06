@@ -5,7 +5,7 @@ export const TILE_TYPES = [
         caveType: '0000',
         biomeType: 'rock',
         generalType: 'tunnel',
-        count: 0
+        count: 4
     }, 
     {
         // ТОННЕЛЬ ТРИ СТОРОНЫ
@@ -29,7 +29,7 @@ export const TILE_TYPES = [
         caveType: '0000',
         biomeType: 'rock',
         generalType: 'tunnel',
-        count: 4
+        count: 0
     },
     {
         // ПЕЩЕРА 1 СТОРОНА
@@ -37,7 +37,7 @@ export const TILE_TYPES = [
         caveType: '1000',
         biomeType: 'rock',
         generalType: 'shroom',
-        count: 6
+        count: 0
     },
     {
         // ПЕЩЕРА 2 СТОРОНЫ
@@ -45,7 +45,7 @@ export const TILE_TYPES = [
         caveType: '1100',
         biomeType: 'rock',
         generalType: 'shroom',
-        count: 6
+        count: 0
     },
     {
         // ПЕЩЕРА БУХТОЧКА
