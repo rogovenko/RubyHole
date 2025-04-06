@@ -24,6 +24,6 @@ export const LEVELS = [{
 {
     depth: 30,
     tunnelType: '1100',
-    biomeType: 'rock',
+    biomeType: 'meat',
     prize: 30,
 }]

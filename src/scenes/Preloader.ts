@@ -82,11 +82,28 @@ export class Preloader extends Scene
         this.load.image('shroom_shell_1101', 'assets/images/tiles/pantsir griby3.png');
         this.load.image('shroom_shell_1111', 'assets/images/tiles/pantsir griby4.png');
 
-        this.load.image('hole_shell_0000', 'assets/images/tiles/hole1.png');
-        this.load.image('hole_shell_0100', 'assets/images/tiles/hole2.png');
-        this.load.image('hole_shell_1100', 'assets/images/tiles/hole3.png');
-        this.load.image('hole_shell_0111', 'assets/images/tiles/hole4.png');
-        this.load.image('hole_shell_1111', 'assets/images/tiles/hole5.png');
+        this.load.image('hole_shell_0000', 'assets/images/tiles/pantsir hole1.png');
+        this.load.image('hole_shell_0100', 'assets/images/tiles/pantsir hole2.png');
+        this.load.image('hole_shell_1100', 'assets/images/tiles/pantsir hole3.png');
+        this.load.image('hole_shell_0111', 'assets/images/tiles/pantsir hole4.png');
+        this.load.image('hole_shell_1111', 'assets/images/tiles/pantsir hole5.png');
+
+        this.load.image('tunnel_meat_0000', 'assets/images/tiles/ploti1.png');
+        this.load.image('tunnel_meat_1010', 'assets/images/tiles/ploti2.png');
+        this.load.image('tunnel_meat_1100', 'assets/images/tiles/ploti3.png');
+        this.load.image('tunnel_meat_1110', 'assets/images/tiles/ploti4.png');
+        this.load.image('tunnel_meat_1111', 'assets/images/tiles/ploti5.png');
+
+        this.load.image('shroom_meat_1000', 'assets/images/tiles/ploti griby1.png');
+        this.load.image('shroom_meat_1100', 'assets/images/tiles/ploti griby2.png');
+        this.load.image('shroom_meat_1101', 'assets/images/tiles/ploti griby3.png');
+        this.load.image('shroom_meat_1111', 'assets/images/tiles/ploti griby4.png');
+
+        this.load.image('hole_meat_0000', 'assets/images/tiles/hole1.png');
+        this.load.image('hole_meat_0100', 'assets/images/tiles/hole2.png');
+        this.load.image('hole_meat_1100', 'assets/images/tiles/hole3.png');
+        this.load.image('hole_meat_0111', 'assets/images/tiles/hole4.png');
+        this.load.image('hole_meat_1111', 'assets/images/tiles/hole5.png');
 
         // UI
         this.load.image('ruby_icon', 'assets/ui/ruby_icon.png');
