@@ -108,7 +108,7 @@ export class Preloader extends Scene
         this.load.image('hole_meat_0111', 'assets/images/tiles/hole4.png');
         this.load.image('hole_meat_1111', 'assets/images/tiles/hole5.png');
 
-        this.load.image('empty_tile', 'assets/images/tiles/empty.png');
+        this.load.image('empty_tile', 'assets/images/tiles/nothing.png');
 
         this.load.image('rock_ruby', 'assets/images/tiles/rock_ruby.png');
         this.load.image('shell_ruby', 'assets/images/tiles/shell_ruby.png');
@@ -121,6 +121,10 @@ export class Preloader extends Scene
 
         // UI
         this.load.image('ruby_icon', 'assets/ui/ruby_icon.png');
+        this.load.image('bg1', 'assets/ui/interface1.png');
+        this.load.image('bg2', 'assets/ui/interface2.png');
+        this.load.image('shadow', 'assets/ui/shadow.png');
+        this.load.image('bg_gnomes', 'assets/ui/background.png');
 
         // ANIMATIONS
         // this.load.atlas('time', 'assets/anim/time.png', 'assets/anim/time.json');
