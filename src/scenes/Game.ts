@@ -15,6 +15,7 @@ export class Game extends Scene {
     currentTileCode: TileType = { tunnelType: '1111', caveType: '0000', generalType: 'tunnel', locked: false, x: 0, y: 0 };
     scrollOffsetY: number = 0;
     gridRects: Map<string, Phaser.GameObjects.Rectangle> = new Map();
+    shadowTiles: Map<string, Phaser.GameObjects.Image> = new Map();
     fogContainer: Phaser.GameObjects.Container;
     fogTiles: Map<string, Phaser.GameObjects.Rectangle> = new Map();
     deckNumber: Phaser.GameObjects.Text;
@@ -37,6 +38,7 @@ export class Game extends Scene {
     isMusicPlaying: boolean = true;
     musicButton: Phaser.GameObjects.Rectangle;
     rubyMax: number = MAX_RUBY;
+    redTiles: Map<string, Phaser.GameObjects.Rectangle> = new Map();
 
     constructor() {
         super('Game');
@@ -51,13 +53,14 @@ export class Game extends Scene {
         this.scrollOffsetY = -surfaceOffset;
         this.cameras.main.setBackgroundColor("#ffffff");
 
+        
         // Воспроизведение фоновой музыки
         this.backgroundMusic = this.sound.add('background_music', {
             volume: 0.3,
             loop: true
         });
         this.backgroundMusic.play();
-
+        
         this.mapContainer = this.add.container(0, -this.scrollOffsetY);
         this.fogContainer = this.add.container(0, -this.scrollOffsetY);
 
@@ -81,13 +84,13 @@ export class Game extends Scene {
 
     createGameWinScreen() {
         this.gameWinScreenGroup = this.add.group();
-        const gameWinScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive();
+        const gameWinScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive().setDepth(5);
         this.gameWinScreenGroup.add(gameWinScreen);
 
         let gameWinScreenText = this.add.text(400, 100, textData.gameWin[this.currentLang], {
             color: '#ffffff',
             fontSize: '48px'
-        }).setOrigin(0.5).setDepth(2);
+        }).setOrigin(0.5).setDepth(5);
         this.gameWinScreenGroup.add(gameWinScreenText);
 
         let textForWinner = this.add.text(400, 200, textData.gameWinWinner[this.currentLang], {
@@ -96,13 +99,13 @@ export class Game extends Scene {
             fixedWidth: 300,
             align: 'center',
             wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(2);
+        }).setOrigin(0.5).setDepth(5);
         this.gameWinScreenGroup.add(textForWinner);
 
         let ruby_icon = this.add.image(370, 330, 'ruby_icon')
             .setScale(0.5)
             .setOrigin(0.5)
-            .setDepth(1);
+            .setDepth(5);
         this.gameWinScreenGroup.add(ruby_icon);
 
         this.gameWinRubyNumber = this.add.text(420, 330, this.rubyNumber.toString(), {
@@ -111,18 +114,18 @@ export class Game extends Scene {
             fixedWidth: 300,
             align: 'center',
             wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(2);
+        }).setOrigin(0.5).setDepth(5);
         this.gameWinScreenGroup.add(this.gameWinRubyNumber);
 
         let buttonRestartGame = this.add.rectangle(400, 400, 120, 40, 0x4a90e2)
             .setInteractive()
             .setOrigin(0.5)
-            .setDepth(2);   
+            .setDepth(5);   
 
         let buttonRestartGameText = this.add.text(400, 400, 'RESTART', {
             color: '#ffffff',
             fontSize: '20px'
-        }).setOrigin(0.5).setDepth(2);
+        }).setOrigin(0.5).setDepth(5);
         this.gameWinScreenGroup.add(buttonRestartGameText);
 
         buttonRestartGame.on('pointerdown', () => {
@@ -132,13 +135,13 @@ export class Game extends Scene {
 
     createGameOverScreen() {
         this.gaveOverScreenGroup = this.add.group();
-        const gaveOverScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive();
+        const gaveOverScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive().setDepth(5);
         this.gaveOverScreenGroup.add(gaveOverScreen);
 
         let gaveOverScreenText = this.add.text(400, 100, textData.gameOver[this.currentLang], {
             color: '#ffffff',
             fontSize: '48px'
-        }).setOrigin(0.5).setDepth(2);
+        }).setOrigin(0.5).setDepth(5);
         this.gaveOverScreenGroup.add(gaveOverScreenText);
 
         let textForLoser = this.add.text(400, 200, textData.gameOverLoser[this.currentLang], {
@@ -147,13 +150,13 @@ export class Game extends Scene {
             fixedWidth: 300,
             align: 'center',
             wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(1);
+        }).setOrigin(0.5).setDepth(5);
         this.gaveOverScreenGroup.add(textForLoser);
 
         let ruby_icon = this.add.image(370, 330, 'ruby_icon')
             .setScale(0.5)
             .setOrigin(0.5)
-            .setDepth(2);
+            .setDepth(5);
         this.gaveOverScreenGroup.add(ruby_icon);
 
         this.gameOverRubyNumber = this.add.text(420, 330, this.rubyNumber.toString(), {
@@ -162,18 +165,18 @@ export class Game extends Scene {
             fixedWidth: 300,
             align: 'center',
             wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(2);
+        }).setOrigin(0.5).setDepth(5);
         this.gaveOverScreenGroup.add(this.gameOverRubyNumber);
 
         let buttonRestartGame = this.add.rectangle(400, 400, 120, 40, 0x4a90e2)
             .setInteractive()
             .setOrigin(0.5)
-            .setDepth(2);   
+            .setDepth(5);   
 
         let buttonRestartGameText = this.add.text(400, 400, 'RESTART', {
             color: '#ffffff',
             fontSize: '20px'
-        }).setOrigin(0.5).setDepth(2);
+        }).setOrigin(0.5).setDepth(5);
         this.gaveOverScreenGroup.add(buttonRestartGameText);
 
         buttonRestartGame.on('pointerdown', () => {
@@ -183,17 +186,17 @@ export class Game extends Scene {
 
     createEventScreen() {
         this.eventScreenGroup = this.add.group();
-        const eventScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive();
+        const eventScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive().setDepth(5);
         this.eventScreenGroup.add(eventScreen);
 
         this.characterLeft = this.add.image(400, 300, 'gnome1')
             .setScale(0.5)
-            .setDepth(2);
+            .setDepth(5);
         this.eventScreenGroup.add(this.characterLeft);
 
         this.characterRight = this.add.image(400, 300, 'gnome2')
             .setScale(0.5)
-            .setDepth(2);
+            .setDepth(5);
         this.eventScreenGroup.add(this.characterRight);
 
         Phaser.Display.Align.In.Center(this.characterLeft, eventScreen);
@@ -204,7 +207,7 @@ export class Game extends Scene {
         this.characterRight.y -= 50;
 
         this.bubble = this.add.image(400, 400, 'bubble')
-            .setDepth(2);
+            .setDepth(5);
         this.eventScreenGroup.add(this.bubble);
 
         this.eventScreenText = this.add.text(400, 400, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', {
@@ -214,7 +217,7 @@ export class Game extends Scene {
             align: 'center',
             wordWrap: { width: 300, useAdvancedWrap: true }
         }).setOrigin(0.5)
-            .setDepth(2);
+            .setDepth(5);
         this.eventScreenGroup.add(this.eventScreenText);
 
         eventScreen.on('pointerdown', () => {
@@ -369,6 +372,30 @@ export class Game extends Scene {
                 ).setOrigin(0.5);
                 emptyTile.setDisplaySize(TILE_SIZE, TILE_SIZE);
                 this.mapContainer.add(emptyTile);
+
+                const shadowTile = this.add.image(
+                    x * TILE_SIZE + TILE_SIZE / 2,
+                    y * TILE_SIZE + TILE_SIZE / 2,
+                    'shadow'
+                ).setOrigin(0.5)
+                .setDisplaySize(TILE_SIZE * 1.25, TILE_SIZE * 1.25)
+                .setDepth(3);
+                this.mapContainer.add(shadowTile);
+                this.shadowTiles.set(`${x},${y}`, shadowTile);
+                shadowTile.setAlpha(0);
+
+                const redTile = this.add.rectangle(
+                    x * TILE_SIZE + TILE_SIZE / 2,
+                    y * TILE_SIZE + TILE_SIZE / 2,
+                    TILE_SIZE,
+                    TILE_SIZE,
+                    0xff0000    
+                ).setOrigin(0.5)
+                // .setDisplaySize(TILE_SIZE * 1.25, TILE_SIZE * 1.25)
+                .setDepth(4);
+                this.mapContainer.add(redTile);
+                this.redTiles.set(`${x},${y}`, redTile);
+                redTile.setAlpha(0);
             }
         }
     }
@@ -521,20 +548,44 @@ export class Game extends Scene {
     updateHoverHighlight(pointer: Phaser.Input.Pointer) {
         const x = Math.floor(pointer.worldX / TILE_SIZE);
         const y = Math.floor((pointer.worldY + this.scrollOffsetY) / TILE_SIZE);
-
+        
         this.gridRects.forEach((rect, key) => {
             if (this.placedTiles.has(key)) return;
             rect.setStrokeStyle(0, COLORS.BLUE);
         });
 
         const rect = this.gridRects.get(`${x},${y}`);
-        if (!rect) return;
+        this.redTiles.forEach((tile, key) => {
+            tile.setAlpha(0);
+        });
+        this.shadowTiles.forEach((tile, key) => {
+            tile.setAlpha(0);
+        });
+        if (!rect){
+            return
+
+        }
         if (this.placedTiles.has(`${x},${y}`)) return;
 
-        if (this.isAdjacentToPlaced(x, y) && this.fitsWithNeighbors(x, y)) {
-            rect.setStrokeStyle(2, COLORS.GREEN);
+        const shadowTile = this.shadowTiles.get(`${x},${y}`);
+
+        const redTile = this.redTiles.get(`${x},${y}`);
+        
+        if (this.currentTileCode.generalType === 'small_ruby') {
+            shadowTile!.setTexture('rock_ruby');
+            shadowTile!.setRotation(Phaser.Math.DegToRad(this.currentTile?.getData('rotation') || 0));
         } else {
-            rect.setStrokeStyle(2, COLORS.RED);
+            let type = this.currentTileCode.generalType === 'tunnel' ? this.currentTileCode.tunnelType : this.currentTileCode.caveType;
+            shadowTile!.setTexture(this.currentTileCode.generalType + '_' + "rock" + '_' + type);
+            shadowTile!.setRotation(Phaser.Math.DegToRad(this.currentTile?.getData('rotation') || 0));
+        }
+
+        if (this.isAdjacentToPlaced(x, y) && this.fitsWithNeighbors(x, y)) {
+            redTile!.setAlpha(0);
+            shadowTile!.setAlpha(0.3);
+        } else {
+            redTile!.setAlpha(0.1);
+            shadowTile!.setAlpha(0.3);
         }
     }
 
