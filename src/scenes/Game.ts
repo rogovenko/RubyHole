@@ -214,7 +214,7 @@ export class Game extends Scene {
                     TILE_SIZE,
                     TILE_SIZE,
                     0xdddddd
-                ).setStrokeStyle(2, COLORS.BLUE);
+                ).setStrokeStyle(0, COLORS.BLUE);
                 this.mapContainer.add(rect);
                 this.gridRects.set(`${x},${y}`, rect);
             }
@@ -317,7 +317,7 @@ export class Game extends Scene {
         this.currentTile.setData('rotation', 0);
 
         const deckSlot = this.add.rectangle(deckX, deckY, TILE_SIZE, TILE_SIZE)
-            .setStrokeStyle(3, COLORS.BLUE)
+            .setStrokeStyle(0, COLORS.BLUE)
             .setFillStyle(0xffffff, 0.2);
         deckSlot.setDepth(-1);
 
@@ -334,7 +334,7 @@ export class Game extends Scene {
 
         this.gridRects.forEach((rect, key) => {
             if (this.placedTiles.has(key)) return;
-            rect.setStrokeStyle(2, COLORS.BLUE);
+            rect.setStrokeStyle(0, COLORS.BLUE);
         });
 
         const rect = this.gridRects.get(`${x},${y}`);
