@@ -401,6 +401,7 @@ export class Game extends Scene {
     }
 
     initDeck() {
+        let arr = []
         // Create a pool of tiles based on their counts
         const tilePool: TileType[] = [];
         for (const tileType of TILE_TYPES) {
@@ -412,13 +413,16 @@ export class Game extends Scene {
         const shadow = this.add.image(630, 250, 'shadow').setDisplaySize(TILE_SIZE*2.5 + 45, TILE_SIZE*2.5 + 45).setOrigin(0.5).setDepth(0);
         // Shuffle and take tiles from the pool
         for (let i = tilePool.length - 1; i > 0; i--) {
-            let chance = Math.random() < 0.1;
+            let percent = Math.random() * 100;
+            let chance = percent < RUBY_CHANCE;
             if(chance && this.rubyMax > 0){
                 tilePool[i].generalType = 'small_ruby';
                 this.rubyMax--;
+                arr.push("ruby");
             }else{
                 const j = Math.floor(Math.random() * (i + 1));
                 [tilePool[i], tilePool[j]] = [tilePool[j], tilePool[i]];
+                arr.push("no ruby");
             }
         }
 
@@ -428,6 +432,8 @@ export class Game extends Scene {
             color: '#ffffff',
             fontSize: '20px'
         }).setOrigin(0.5);
+
+        console.log("arr", arr)
     }
 
     updateDeckNumber() {
@@ -437,7 +443,8 @@ export class Game extends Scene {
 
     addTilesToDeck(count: number) {
         for (let i = 0; i < count; i++) {
-            let chance = Math.random() < RUBY_CHANCE;
+            let percent = Math.random() * 100;
+            let chance = percent < RUBY_CHANCE;
             if(chance && this.rubyMax > 0){
                 this.deck.unshift({tunnelType: '0000', caveType: '0000', generalType: 'small_ruby', locked: false, x: 0, y: 0});
                 this.rubyMax--;
