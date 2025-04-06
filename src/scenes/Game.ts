@@ -297,39 +297,10 @@ export class Game extends Scene {
             this.currentTileCode.y = y;
             
             // Это сложная проверка для открытия хоулов
-            const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];
-            directions.forEach(([dx, dy]) => {
-                const neighborKey = `${x + dx},${y + dy}`;
-                const neighborTile = this.placedTiles.get(neighborKey);
-                if (neighborTile && neighborTile.type.generalType === 'hole') {
-                    // Lock hole tile if current tile is a tunnel and connects properly
-                    if (this.currentTileCode.generalType === 'tunnel') {
-                        // Get the direction from hole to current tile
-                        const directionIndex = directions.findIndex(([dirX, dirY]) => 
-                            dirX === -dx && dirY === -dy
-                        );
-                        
-                        // Get the rotated tunnel types
-                        const rotatedHoleTunnelType = this.getRotatedType(neighborTile.type.tunnelType, neighborTile.rotation);
-                        const rotatedCurrentTunnelType = this.getRotatedType(this.currentTileCode.tunnelType, this.currentTile?.getData('rotation') || 0);
-                        
-                        // Check if the tunnel exits match in opposite directions
-                        const holeTunnelBit = rotatedHoleTunnelType[directionIndex];
-                        const currentTunnelBit = rotatedCurrentTunnelType[(directionIndex + 2) % 4];
-                        
-                        // Unlock only if both tiles have tunnels connecting
-                        if (holeTunnelBit === '1' && currentTunnelBit === '1') {
-                            // Create a new tile data object with locked=false
-                            const updatedTile = {...neighborTile, locked: false};
-                            this.placedTiles.set(neighborKey, updatedTile);
-                        }
-                    }
-                }
-            });
+            const isRubyComplete = this.checkRubyHole(this.currentTileCode, this.currentTile);
 
             if(this.currentTileCode.generalType === 'shroom'){
                 let isComplete = this.checkCaveIsComplete(this.currentTileCode, this.currentTile);
-                console.log("isComplete", isComplete)
             }
             
             this.updateFogOfWar(y);
@@ -345,6 +316,54 @@ export class Game extends Scene {
             this.currentTile.setData('rotation', rotation % 360);
             this.updateHoverHighlight(pointer);
         }
+    }
+
+    checkRubyHole(currentTileCode: TileType, currentTile: Phaser.GameObjects.Image){
+        const x = currentTileCode.x;
+        const y = currentTileCode.y;
+        const tileKey = `${x},${y}`;
+        
+        // Get the rotation in degrees
+        const rotationDegrees = Phaser.Math.RadToDeg(currentTile.rotation);
+        
+        // Get the rotated cave type for current tile
+        const rotatedCaveType = this.getRotatedType(currentTileCode.tunnelType, rotationDegrees);
+        
+        const directions = [[0, -1], [1, 0], [0, 1], [-1, 0]]; // Up, Right, Down, Left
+        let isRubyComplete = false;
+        
+        // Check each direction where current tile has a "1"
+        for (let index = 0; index < rotatedCaveType.length; index++) {
+            if (rotatedCaveType[index] === '1') {
+                const [dx, dy] = directions[index];
+                const neighborX = x + dx;
+                const neighborY = y + dy;
+                
+                const neighborKey = `${neighborX},${neighborY}`;
+                const neighborTile = this.placedTiles.get(neighborKey);
+                
+                if (!neighborTile || neighborTile.type.generalType !== 'hole') {
+                    continue;
+                }
+                
+                // Get rotated type of neighbor
+                const neighborRotationDegrees = neighborTile.rotation;
+                const rotatedNeighborType = this.getRotatedType(
+                    neighborTile.type.tunnelType,
+                    neighborRotationDegrees
+                );
+                
+                // Check if neighbor connects back
+                const oppositeIndex = (index + 2) % 4;
+                if (rotatedNeighborType[oppositeIndex] !== '1') {
+                    continue;
+                }else{
+                    isRubyComplete = true;
+                    neighborTile.locked = false;
+                }
+            }
+        }
+        return isRubyComplete;
     }
 
     checkCaveIsComplete(tileCode: TileType, tile: Phaser.GameObjects.Image) {
@@ -422,7 +441,6 @@ export class Game extends Scene {
         // Start the recursive check with the initial tile
         const isComplete = checkTile(tileCode, tile);
         if(isComplete){
-            console.log("Cave is complete with", checkedTiles.size, "tiles");
             this.addTilesToDeck(checkedTiles.size);
         }
         return isComplete;
