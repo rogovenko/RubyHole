@@ -53,6 +53,9 @@ export class Preloader extends Scene
             });
         });
 
+        // Загрузка фоновой музыки
+        this.load.audio('background_music', 'assets/audio/background.mp3');
+
         // TILES
         this.load.image('tunnel_rock_0000', 'assets/images/tiles/kamni1.png');
         this.load.image('tunnel_rock_1010', 'assets/images/tiles/kamni2.png');
