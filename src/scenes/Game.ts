@@ -128,15 +128,15 @@ export class Game extends Scene {
         });
 
         // разместить руби хоулы
-        this.placeRubyHole(6)
-        this.placeRubyHole(15)
-        this.placeRubyHole(30)
+        this.placeRubyHole(6, '1111', 'rock')
+        this.placeRubyHole(15, '0111', 'rock')
+        this.placeRubyHole(30, '1100', 'rock')
     }
 
-    placeRubyHole(depth: number) {
+    placeRubyHole(depth: number, tunnelType: String, biomeType: String) {
         const x2 = Math.floor(Math.random() * 7);
         const y2 = depth;
-        const tileType2 = { tunnelType: '1111', caveType: '0000', biomeType: 'rock', generalType: 'hole', count: 0, locked: false, x: x2, y: y2 };
+        const tileType2 = { tunnelType: tunnelType, caveType: '0000', biomeType: biomeType, generalType: 'hole', count: 0, locked: false, x: x2, y: y2 };
         const rotation2 = Math.floor(Math.random() * 4) * 90; // Random rotation in 90 degree increments
         const tile2 = this.add.image(
             x2 * TILE_SIZE + TILE_SIZE / 2,
