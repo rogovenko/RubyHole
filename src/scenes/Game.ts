@@ -1,7 +1,7 @@
 import { Scene } from 'phaser';
 import { TILE_TYPES } from '../data/tileTypes';
 import { TileData, TileType } from '../types';
-import { COLORS, FOG_OF_WAR_DISTANCE, MAP_HEIGHT, MAP_WIDTH, TILE_SIZE } from '../configs/config';
+import { COLORS, FOG_OF_WAR_DISTANCE, LEVELS, MAP_HEIGHT, MAP_WIDTH, TILE_SIZE } from '../configs/config';
 
 
 export class Game extends Scene {
@@ -120,7 +120,7 @@ export class Game extends Scene {
         const x = 3;
         const y = 0;
         const tileType = {...TILE_TYPES[0], locked: false, x: x, y: y};
-        const tile = this.add.image(x * TILE_SIZE, y * TILE_SIZE, tileType.generalType + '_' + tileType.tunnelType).setOrigin(0);
+        const tile = this.add.image(x * TILE_SIZE, y * TILE_SIZE, tileType.generalType + '_' + "rock" + '_' + tileType.tunnelType).setOrigin(0);
         tile.setDisplaySize(TILE_SIZE, TILE_SIZE);
         this.mapContainer.add(tile);
         this.placedTiles.set(`${x},${y}`, {
@@ -128,12 +128,12 @@ export class Game extends Scene {
         });
 
         // разместить руби хоулы
-        this.placeRubyHole(6, '1111', 'rock')
-        this.placeRubyHole(15, '0111', 'rock')
-        this.placeRubyHole(30, '1100', 'rock')
+        LEVELS.forEach(level => {
+            this.placeRubyHole(level.depth, level.tunnelType, level.biomeType)
+        })
     }
 
-    placeRubyHole(depth: number, tunnelType: String, biomeType: String) {
+    placeRubyHole(depth: number, tunnelType: string, biomeType: string) {
         const x2 = Math.floor(Math.random() * 7);
         const y2 = depth;
         const tileType2 = { tunnelType: tunnelType, caveType: '0000', biomeType: biomeType, generalType: 'hole', count: 0, locked: false, x: x2, y: y2 };
@@ -141,7 +141,7 @@ export class Game extends Scene {
         const tile2 = this.add.image(
             x2 * TILE_SIZE + TILE_SIZE / 2,
             y2 * TILE_SIZE + TILE_SIZE / 2,
-            tileType2.generalType + '_' + tileType2.tunnelType
+            tileType2.generalType + '_' + tileType2.biomeType + '_' + tileType2.tunnelType
         ).setOrigin(0.5);  // Set origin to center
         tile2.setDisplaySize(TILE_SIZE, TILE_SIZE);
         tile2.setRotation(Phaser.Math.DegToRad(rotation2));
@@ -169,8 +169,8 @@ export class Game extends Scene {
                 currentCode = this.currentTileCode.tunnelType;
                 break;
         }
-
-        this.currentTile = this.add.image(deckX, deckY, this.currentTileCode.generalType + '_' + currentCode).setInteractive();
+        console.log("name", this.currentTileCode.generalType + '_' + "rock" + '_' + currentCode)
+        this.currentTile = this.add.image(deckX, deckY, this.currentTileCode.generalType + '_' + "rock" + '_' + currentCode).setInteractive();
         this.currentTile.setDisplaySize(TILE_SIZE, TILE_SIZE);
         this.currentTile.setData('type', this.currentTileCode);
         this.currentTile.setData('rotation', 0);
@@ -279,10 +279,20 @@ export class Game extends Scene {
                     break;
             }
 
+            let biomeType = "rock";
+            for(let i = 0; i < LEVELS.length; i++){
+                if(y <= LEVELS[i].depth){
+                    biomeType = LEVELS[i].biomeType;
+                    break;
+                }
+            }
+
+            console.log("biomeType", biomeType)
+
             const tile = this.add.image(
                 x * TILE_SIZE + TILE_SIZE / 2,
                 y * TILE_SIZE + TILE_SIZE / 2,
-                this.currentTileCode.generalType + '_' + currentCode
+                this.currentTileCode.generalType + '_' + biomeType + '_' + currentCode
             )
                 .setOrigin(0.5)  // Set origin to center
                 .setRotation(this.currentTile.rotation);
