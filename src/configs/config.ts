@@ -8,3 +8,19 @@ export const COLORS = {
     GREEN: 0x00ff00,
     BLUE: 0x0000ff,
 }
+
+export const LEVELS = [{
+    depth: 6,
+    tunnelType: '1111',
+    biomeType: 'rock'
+},
+{
+    depth: 15,
+    tunnelType: '0111',
+    biomeType: 'shell'
+},
+{
+    depth: 30,
+    tunnelType: '1100',
+    biomeType: 'rock'
+}]
