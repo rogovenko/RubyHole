@@ -73,6 +73,7 @@ export class EventScreen{
     }
 
     launch(id: number) {
+        this.game.eventOn = true;
         this.game.currentLevel = id;
         this.eventScreenGroup.setVisible(true);
         this.currentDialogue = eventsData[id].dialogue;
@@ -82,6 +83,7 @@ export class EventScreen{
     nextDialogueLine() {
         if (this.currentDialogue.length === 0){
             this.eventScreenGroup.setVisible(false);
+            this.game.eventOn = false;
             if(this.game.currentLevel === 3){
                 this.eventScreenGroup.setVisible(false);
                 this.game.startStoryScreen();
