@@ -8,6 +8,7 @@ import { UI } from '../ui';
 import { GameOverScreen } from '../screens/gameOver';
 import { EventScreen } from '../screens/eventScreen';
 import { NumbersVfx } from '../vfx/numbers';
+import { StoryScreen } from '../screens/storyScreen';
 
 export class Game extends Scene {
     eventEmitter: Phaser.Events.EventEmitter;
@@ -32,8 +33,6 @@ export class Game extends Scene {
     currentLang: 'en' | 'ru' = 'en';
     gaveOverScreenGroup: Phaser.GameObjects.Group;
     gameOverRubyNumber: Phaser.GameObjects.Text;
-    gameWinScreenGroup: Phaser.GameObjects.Group;
-    gameWinRubyNumber: Phaser.GameObjects.Text;
     currentLevel: number = 1;
     highestFogRow: number = 4; // Start with fog from row 4
     backgroundMusic: Phaser.Sound.BaseSound;
@@ -46,7 +45,7 @@ export class Game extends Scene {
     eventScreen: EventScreen;
     numbersVfx: NumbersVfx;
     isFirstDeckNumber: boolean = true;
-
+    storyScreen: StoryScreen;
     constructor() {
         super('Game');
         this.eventEmitter = new Phaser.Events.EventEmitter();
@@ -88,6 +87,13 @@ export class Game extends Scene {
         this.eventScreen = new EventScreen(this);
         this.input.on('pointermove', this.handlePointerMove, this);
         this.eventScreen.launch(0);
+        // new GameOverScreen(this);
+        // new GameWinScreen(this);
+        // new StoryScreen(this);
+    }
+
+    startStoryScreen() {
+        this.storyScreen = new StoryScreen(this);
     }
 
     addRuby(amount: number) {
@@ -120,7 +126,12 @@ export class Game extends Scene {
         this.fogTiles.clear();
         this.redTiles.clear();
         this.shadowTiles.clear();
-        this.eventScreen.eventScreenGroup.destroy();
+        if(this.storyScreen){
+            this.storyScreen.storyScreenGroup.destroy();
+        }
+        if(this.eventScreen){
+            this.eventScreen.eventScreenGroup.destroy();
+        }
         this.deck = [];
 
         // Destroy UI elements
@@ -131,6 +142,7 @@ export class Game extends Scene {
         this.rubyNumber = 0;
         this.highestFogRow = 4;
         this.scrollOffsetY = 0;
+        this.currentLevel = 0;
 
         // Restart the scene
         this.scene.start('Game');
@@ -218,8 +230,6 @@ export class Game extends Scene {
             fontSize: '38px',
             fontFamily: 'GermaniaOne-Regular'
         }).setOrigin(0.5);
-
-        console.log("arr", arr)
     }
 
     updateDeckNumber() {
@@ -234,6 +244,9 @@ export class Game extends Scene {
     addTilesToDeck(n: number, checkedTilesArray: string[]) {
         let addedTiles = [];
         let count = this.countMushroomReward(n);
+
+        let offset = this.deck.length > 9 ? 40 : 0;
+        this.numbersVfx.create(this.deckNumber.x, this.deckNumber.y, count.toString(), '#ffffff', 500, offset);
 
         for (let i = 0; i < count; i++) {
             let percent = Math.random() * 100;
@@ -257,8 +270,6 @@ export class Game extends Scene {
 
                 if(tile){
                     let tile_name = "";
-                    console.log("tile", tile)
-                    console.log("name", tile.generalType + '_' + "rock" + '_' + tile.tunnelType)
                     if(tile === "ruby"){
                         tile_name = "rock_ruby";
                     }else{
@@ -312,7 +323,6 @@ export class Game extends Scene {
     }
 
     drawNextTile() {
-        console.log("deck.length", this.deck.length)
         if (this.deck.length === 0){
             new GameOverScreen(this);
             return;
@@ -321,8 +331,6 @@ export class Game extends Scene {
         this.currentTileCode = this.deck.pop()!;
         const deckX = 624;
         const deckY = 250;
-
-        console.log("currentTileCode", this.currentTileCode)
 
         // определяем это пещеры или туннели
         let currentCode = "0000"
@@ -338,7 +346,6 @@ export class Game extends Scene {
                 currentCode = '0000';
                 break;
         }
-        console.log("tile", this.currentTileCode)
         
         if(this.currentTileCode.generalType === 'small_ruby'){
             this.currentTile = this.add.image(deckX, deckY, 'rock_ruby').setDepth(1);
@@ -500,8 +507,6 @@ export class Game extends Scene {
             if(y > 30){
                 biomeType = "meat";
             }
-
-            console.log("currentTileCode", this.currentTileCode)
 
             const tile = this.add.image(
                 x * TILE_SIZE + TILE_SIZE / 2,
@@ -692,9 +697,8 @@ export class Game extends Scene {
         // Start the recursive check with the initial tile
         const isComplete = checkTile(tileCode, tile);
         const checkedTilesArray = Array.from(checkedTiles);
+        console.log("checkedTilesArray", checkedTilesArray)
         if(isComplete){
-            let offset = this.deck.length > 9 ? 40 : 0;
-            this.numbersVfx.create(this.deckNumber.x, this.deckNumber.y, checkedTiles.size.toString(), '#ffffff', 500, offset);
             setTimeout(() => {
                 this.addTilesToDeck(checkedTiles.size, checkedTilesArray);
             }, 700);
