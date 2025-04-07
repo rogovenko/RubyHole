@@ -2,9 +2,11 @@ import { Scene } from 'phaser';
 import { TILE_TYPES } from '../data/tileTypes';
 import { Dialogue, TileData, TileType } from '../types';
 import { COLORS, FOG_OF_WAR_DISTANCE, LEVELS, MAP_HEIGHT, MAP_WIDTH, MAX_RUBY, RUBY_CHANCE, TILE_SIZE } from '../configs/config';
-import { eventsData } from '../data/events';
-import { textData } from '../data/textData';
-
+import { EmojiVfx } from '../vfx/emoji';
+import { GetItemVfx } from '../vfx/get_item';
+import { UI } from '../ui';
+import { GameOverScreen } from '../screens/gameOver';
+import { EventScreen } from '../screens/eventScreen';
 
 export class Game extends Scene {
     eventEmitter: Phaser.Events.EventEmitter;
@@ -19,7 +21,6 @@ export class Game extends Scene {
     fogContainer: Phaser.GameObjects.Container;
     fogTiles: Map<string, Phaser.GameObjects.Rectangle> = new Map();
     deckNumber: Phaser.GameObjects.Text;
-    rubyNumberText: Phaser.GameObjects.Text;
     rubyNumber: number = 0;
     eventScreenGroup: Phaser.GameObjects.Group;
     characterLeft: Phaser.GameObjects.Image;
@@ -36,23 +37,26 @@ export class Game extends Scene {
     highestFogRow: number = 4; // Start with fog from row 4
     backgroundMusic: Phaser.Sound.BaseSound;
     isMusicPlaying: boolean = true;
-    musicButton: Phaser.GameObjects.Rectangle;
     rubyMax: number = MAX_RUBY;
     redTiles: Map<string, Phaser.GameObjects.Rectangle> = new Map();
+    emojiVfx: EmojiVfx;
+    itemVfx: GetItemVfx;
+    ui: UI;
+    eventScreen: EventScreen;
 
     constructor() {
         super('Game');
         this.eventEmitter = new Phaser.Events.EventEmitter();
         this.placedTiles = new Map();
+        this.emojiVfx = new EmojiVfx(this);
+        this.itemVfx = new GetItemVfx(this);
         this.deck = [];
     }
-
+    
     create() {
-        this.add.image(0, 0, 'bg1').setOrigin(0, 0).setDisplaySize(800, 600);
+        this.ui = new UI(this);
         const surfaceOffset = 129;
         this.scrollOffsetY = -surfaceOffset;
-        this.cameras.main.setBackgroundColor("#ffffff");
-
         
         // Воспроизведение фоновой музыки
         this.backgroundMusic = this.sound.add('background_music', {
@@ -74,252 +78,16 @@ export class Game extends Scene {
         this.input.on('pointerup', this.handlePointerUp, this);
         this.input.on('wheel', this.handleWheel, this);
 
-        this.createUI()
         this.setupInitialTiles();
         this.drawNextTile();
-        this.createEventScreen();
+        this.eventScreen = new EventScreen(this);
         this.input.on('pointermove', this.handlePointerMove, this);
         // this.launchEventScreen(1)
     }
 
-    createGameWinScreen() {
-        this.gameWinScreenGroup = this.add.group();
-        const gameWinScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive().setDepth(5);
-        this.gameWinScreenGroup.add(gameWinScreen);
-
-        let gameWinScreenText = this.add.text(400, 100, textData.gameWin[this.currentLang], {
-            color: '#ffffff',
-            fontSize: '48px'
-        }).setOrigin(0.5).setDepth(5);
-        this.gameWinScreenGroup.add(gameWinScreenText);
-
-        let textForWinner = this.add.text(400, 200, textData.gameWinWinner[this.currentLang], {
-            color: '#ffffff',
-            fontSize: '24px',
-            fixedWidth: 300,
-            align: 'center',
-            wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(5);
-        this.gameWinScreenGroup.add(textForWinner);
-
-        let ruby_icon = this.add.image(370, 330, 'ruby_icon')
-            .setScale(0.5)
-            .setOrigin(0.5)
-            .setDepth(5);
-        this.gameWinScreenGroup.add(ruby_icon);
-
-        this.gameWinRubyNumber = this.add.text(420, 330, this.rubyNumber.toString(), {
-            color: '#ffffff',
-            fontSize: '30px',
-            fixedWidth: 300,
-            align: 'center',
-            wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(5);
-        this.gameWinScreenGroup.add(this.gameWinRubyNumber);
-
-        let buttonRestartGame = this.add.rectangle(400, 400, 120, 40, 0x4a90e2)
-            .setInteractive()
-            .setOrigin(0.5)
-            .setDepth(5);   
-
-        let buttonRestartGameText = this.add.text(400, 400, 'RESTART', {
-            color: '#ffffff',
-            fontSize: '20px'
-        }).setOrigin(0.5).setDepth(5);
-        this.gameWinScreenGroup.add(buttonRestartGameText);
-
-        buttonRestartGame.on('pointerdown', () => {
-            this.restartGame();
-        });
-    }
-
-    createGameOverScreen() {
-        this.gaveOverScreenGroup = this.add.group();
-        const gaveOverScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive().setDepth(5);
-        this.gaveOverScreenGroup.add(gaveOverScreen);
-
-        let gaveOverScreenText = this.add.text(400, 100, textData.gameOver[this.currentLang], {
-            color: '#ffffff',
-            fontSize: '48px'
-        }).setOrigin(0.5).setDepth(5);
-        this.gaveOverScreenGroup.add(gaveOverScreenText);
-
-        let textForLoser = this.add.text(400, 200, textData.gameOverLoser[this.currentLang], {
-            color: '#ffffff',
-            fontSize: '24px',
-            fixedWidth: 300,
-            align: 'center',
-            wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(5);
-        this.gaveOverScreenGroup.add(textForLoser);
-
-        let ruby_icon = this.add.image(370, 330, 'ruby_icon')
-            .setScale(0.5)
-            .setOrigin(0.5)
-            .setDepth(5);
-        this.gaveOverScreenGroup.add(ruby_icon);
-
-        this.gameOverRubyNumber = this.add.text(420, 330, this.rubyNumber.toString(), {
-            color: '#ffffff',
-            fontSize: '30px',
-            fixedWidth: 300,
-            align: 'center',
-            wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5).setDepth(5);
-        this.gaveOverScreenGroup.add(this.gameOverRubyNumber);
-
-        let buttonRestartGame = this.add.rectangle(400, 400, 120, 40, 0x4a90e2)
-            .setInteractive()
-            .setOrigin(0.5)
-            .setDepth(5);   
-
-        let buttonRestartGameText = this.add.text(400, 400, 'RESTART', {
-            color: '#ffffff',
-            fontSize: '20px'
-        }).setOrigin(0.5).setDepth(5);
-        this.gaveOverScreenGroup.add(buttonRestartGameText);
-
-        buttonRestartGame.on('pointerdown', () => {
-            this.restartGame();
-        });
-    }
-
-    createEventScreen() {
-        this.eventScreenGroup = this.add.group();
-        const eventScreen = this.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive().setDepth(5);
-        this.eventScreenGroup.add(eventScreen);
-
-        this.characterLeft = this.add.image(400, 300, 'gnome1')
-            .setScale(0.5)
-            .setDepth(5);
-        this.eventScreenGroup.add(this.characterLeft);
-
-        this.characterRight = this.add.image(400, 300, 'gnome2')
-            .setScale(0.5)
-            .setDepth(5);
-        this.eventScreenGroup.add(this.characterRight);
-
-        Phaser.Display.Align.In.Center(this.characterLeft, eventScreen);
-        Phaser.Display.Align.In.Center(this.characterRight, eventScreen);
-        this.characterLeft.x -= 500;
-        this.characterRight.x += 100;
-        this.characterLeft.y -= 50;
-        this.characterRight.y -= 50;
-
-        this.bubble = this.add.image(400, 400, 'bubble')
-            .setDepth(5);
-        this.eventScreenGroup.add(this.bubble);
-
-        this.eventScreenText = this.add.text(400, 400, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', {
-            color: '#000000',
-            fontSize: '24px',
-            fixedWidth: 300,
-            align: 'center',
-            wordWrap: { width: 300, useAdvancedWrap: true }
-        }).setOrigin(0.5)
-            .setDepth(5);
-        this.eventScreenGroup.add(this.eventScreenText);
-
-        eventScreen.on('pointerdown', () => {
-            this.nextDialogueLine();
-        });
-
-        this.eventScreenGroup.setVisible(false);
-    }
-
-    launchEventScreen(id: number) {
-        this.currentLevel = id;
-        this.eventScreenGroup.setVisible(true);
-        this.currentDialogue = eventsData[id].dialogue;
-        this.nextDialogueLine();
-    }
-
-    nextDialogueLine() {
-        if (this.currentDialogue.length === 0){
-            this.eventScreenGroup.setVisible(false);
-            if(this.currentLevel === 3){
-                this.createGameWinScreen();
-            }
-            return;
-        }
-        const dialogue = this.currentDialogue.shift();
-        if (!dialogue) return;
-        this.eventScreenText.setText(dialogue.text[this.currentLang]);
-        const centerX = (this.characterLeft.x + this.characterRight.x) / 2;
-        if(dialogue.character !== 'left'){
-            this.bubble.setScale(-1, 1);
-        }else{
-            this.bubble.setScale(1, 1);
-        }
-    }
-
-    createUI() {
-        let axisX = 630;
-        let axisY = 440;
-        let offsetY = 25;
-        const buttonNextTile = this.add.rectangle(axisX, axisY, 120, 40, 0x4a90e2)
-            .setInteractive()
-            .setOrigin(0.5);
-            
-        const buttonNextTileText = this.add.text(axisX, axisY, 'NEXT', {
-            color: '#ffffff',
-            fontSize: '20px'
-        }).setOrigin(0.5);
-
-        buttonNextTile.on('pointerdown', () => {
-            if (this.currentTile) {
-                this.currentTile.destroy();
-                this.currentTile = undefined;
-            }
-            this.drawNextTile();
-        });
-
-        axisY += offsetY;
-        const buttonRestartGame = this.add.rectangle(axisX, axisY + offsetY, 120, 40, 0x4a90e2)
-            .setInteractive()
-            .setOrigin(0.5);
-            
-        const buttonRestartGameText = this.add.text(axisX, axisY + offsetY, 'RESTART', {
-            color: '#ffffff',
-            fontSize: '20px'
-        }).setOrigin(0.5);
-
-        buttonRestartGame.on('pointerdown', () => {
-            this.restartGame();
-        });
-
-        // Создание кнопки управления музыкой
-        axisY += offsetY;
-        const musicButtonBg = this.add.rectangle(axisX, axisY + offsetY*2, 120, 40, 0x4a90e2)
-            .setInteractive()
-
-        const musicButtonText = this.add.text(axisX, axisY + offsetY*2, 'MUSIC', {
-            color: '#ffffff',
-            fontSize: '20px'
-        }).setOrigin(0.5)
-        
-        this.musicButton = musicButtonBg;
-        
-        this.musicButton.on('pointerdown', () => {
-            this.toggleMusic();
-        });
-
-        // РУБИНЫ!
-        this.add.image(600, 80, 'ruby_icon')
-            .setScale(0.5)
-            .setOrigin(0.5);
-
-        this.rubyNumberText = this.add.text(690, 80, '0', {
-            color: '#ffffff',
-            fontSize: '30px',   
-            align: 'left',
-            fixedWidth: 100,
-        }).setOrigin(0.5);
-    }
-
     addRuby(amount: number) {
         this.rubyNumber += amount;
-        this.rubyNumberText.setText(this.rubyNumber.toString());
+        this.ui.rubyNumberText.setText(this.rubyNumber.toString());
     }
 
     restartGame() {
@@ -329,18 +97,22 @@ export class Game extends Scene {
         this.input.off('wheel', this.handleWheel, this);
         this.input.off('pointermove', this.handlePointerMove, this);
 
+        this.backgroundMusic.stop();
+
         // Clear all containers and maps
         this.mapContainer.destroy();
         this.fogContainer.destroy();
-        this.eventScreenGroup.destroy();
         this.placedTiles.clear();
         this.gridRects.clear();
         this.fogTiles.clear();
+        this.redTiles.clear();
+        this.shadowTiles.clear();
+        this.eventScreen.eventScreenGroup.destroy();
         this.deck = [];
 
         // Destroy UI elements
         this.deckNumber.destroy();
-        this.rubyNumberText.destroy();
+        this.ui.rubyNumberText.destroy();
 
         // Reset game state
         this.rubyNumber = 0;
@@ -441,18 +213,41 @@ export class Game extends Scene {
         this.deckNumber.setText(num.toString());
     }
 
-    addTilesToDeck(count: number) {
+    addTilesToDeck(count: number, checkedTilesArray: string[]) {
+        let addedTiles = [];
         for (let i = 0; i < count; i++) {
             let percent = Math.random() * 100;
             let chance = percent < RUBY_CHANCE;
             if(chance && this.rubyMax > 0){
                 this.deck.unshift({tunnelType: '0000', caveType: '0000', generalType: 'small_ruby', locked: false, x: 0, y: 0});
                 this.rubyMax--;
+                addedTiles.push("ruby");
             }else{
                 const randomTileType = TILE_TYPES[Math.floor(Math.random() * TILE_TYPES.length)];
                 this.deck.unshift({...randomTileType, locked: false, x: 0, y: 0});
+                addedTiles.push(randomTileType);
             }
         }
+
+        checkedTilesArray.forEach((tile, index) => {
+            let tileImage = this.placedTiles.get(tile)?.sprite; 
+            if(tileImage){
+                const worldPos = this.mapContainer.getWorldTransformMatrix().transformPoint(tileImage.x, tileImage.y);
+                const tile = addedTiles[index] as unknown as any;
+                let tile_name = "";
+                console.log("tile", tile)
+                console.log("name", tile.generalType + '_' + "rock" + '_' + tile.tunnelType)
+                if(tile === "ruby"){
+                    tile_name = "rock_ruby";
+                }else{
+                    let type = tile.generalType === 'tunnel' ? tile.tunnelType : tile.caveType;
+                    tile_name = tile.generalType + '_' + "rock" + '_' + type;
+                }
+                setTimeout(() => {
+                    this.itemVfx.create(worldPos.x, worldPos.y, tile_name);
+                }, 100 * index);
+            }
+        });
         this.updateDeckNumber();
     }
 
@@ -495,7 +290,7 @@ export class Game extends Scene {
     drawNextTile() {
         console.log("deck.length", this.deck.length)
         if (this.deck.length === 0){
-            this.createGameOverScreen();
+            new GameOverScreen(this);
             return;
         }
 
@@ -707,10 +502,15 @@ export class Game extends Scene {
             
             this.updateFogOfWar(y);
 
+            const worldPos = this.mapContainer.getWorldTransformMatrix().transformPoint(x * TILE_SIZE + TILE_SIZE / 2, y * TILE_SIZE + TILE_SIZE / 2);
             this.currentTile.destroy();
             this.currentTile = undefined;
 
+            // TEST VFX
+            // this.itemVfx.create(worldPos.x, worldPos.y, "shroom_rock_1100");
+
             if(this.currentTileCode.generalType === 'small_ruby'){
+                this.emojiVfx.create(worldPos.x, worldPos.y, 'ruby_icon', 3);
                 this.addRuby(3);
             }
             this.drawNextTile();
@@ -766,9 +566,13 @@ export class Game extends Scene {
                 }else{
                     if(neighborTile.locked){
                         const level = LEVELS.find(l => l.depth === neighborTile.y);
+                        const worldPos = this.mapContainer.getWorldTransformMatrix().transformPoint(neighborTile.sprite.x, neighborTile.sprite.y);
                         if(level){
                             this.addRuby(level.prize);
-                            this.launchEventScreen(level.eventId);
+                            this.emojiVfx.create(worldPos.x, worldPos.y, 'ruby_icon', level.prize);
+                            setTimeout(() => {
+                                this.eventScreen.launch(level.eventId);
+                            }, 1000);
                         }
                     }
                     isRubyComplete = true;
@@ -849,13 +653,15 @@ export class Game extends Scene {
                 }
             }
             
+            
             return isComplete;
         };
         
         // Start the recursive check with the initial tile
         const isComplete = checkTile(tileCode, tile);
+        const checkedTilesArray = Array.from(checkedTiles);
         if(isComplete){
-            this.addTilesToDeck(checkedTiles.size);
+            this.addTilesToDeck(checkedTiles.size, checkedTilesArray);
         }
         return isComplete;
     }
@@ -918,10 +724,10 @@ export class Game extends Scene {
         this.isMusicPlaying = !this.isMusicPlaying;
         if (this.isMusicPlaying) {
             this.backgroundMusic.play();
-            this.musicButton.setFillStyle(0x4a90e2); // Синий цвет (включено)
+            this.ui.musicButton.setFillStyle(0x4a90e2); // Синий цвет (включено)
         } else {
             this.backgroundMusic.pause();
-            this.musicButton.setFillStyle(0x666666); // Серый цвет (выключено)
+            this.ui.musicButton.setFillStyle(0x666666); // Серый цвет (выключено)
         }
     }
 }

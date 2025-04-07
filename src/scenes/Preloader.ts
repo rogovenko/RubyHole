@@ -121,6 +121,7 @@ export class Preloader extends Scene
 
         // UI
         this.load.image('ruby_icon', 'assets/ui/ruby_icon.png');
+        this.load.image('tile_icon', 'assets/ui/tile_icon.png');
         this.load.image('bg1', 'assets/ui/interface1.png');
         this.load.image('bg2', 'assets/ui/interface2.png');
         this.load.image('shadow', 'assets/ui/shadow.png');
