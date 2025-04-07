@@ -228,7 +228,7 @@ export class Game extends Scene {
     }
 
     countMushroomReward(n: number) {
-        return Math.ceil((Math.pow(2, n) / 4) + n);
+        return Math.ceil((Math.pow(n, 2) / 2) + 1);
     }
 
     addTilesToDeck(n: number, checkedTilesArray: string[]) {
