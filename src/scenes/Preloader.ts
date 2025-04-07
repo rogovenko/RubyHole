@@ -62,6 +62,7 @@ export class Preloader extends Scene
         this.load.image('tunnel_rock_1100', 'assets/images/tiles/kamni7.png');
         this.load.image('tunnel_rock_1110', 'assets/images/tiles/kamni10.png');
         this.load.image('tunnel_rock_1111', 'assets/images/tiles/kamni12.png');
+        this.load.image('tunnel_rock_0001', 'assets/images/tiles/kamni13.png');
 
         this.load.image('shroom_rock_1000', 'assets/images/tiles/griby1.png');
         this.load.image('shroom_rock_1100', 'assets/images/tiles/griby2.png');
@@ -79,6 +80,7 @@ export class Preloader extends Scene
         this.load.image('tunnel_shell_1100', 'assets/images/tiles/pantsir3.png');
         this.load.image('tunnel_shell_1110', 'assets/images/tiles/pantsir4.png');
         this.load.image('tunnel_shell_1111', 'assets/images/tiles/pantsir5.png');
+        this.load.image('tunnel_shell_0001', 'assets/images/tiles/pantsir6.png');
 
         this.load.image('shroom_shell_1000', 'assets/images/tiles/pantsir griby1.png');
         this.load.image('shroom_shell_1100', 'assets/images/tiles/pantsir griby2.png');
@@ -96,6 +98,7 @@ export class Preloader extends Scene
         this.load.image('tunnel_meat_1100', 'assets/images/tiles/ploti3.png');
         this.load.image('tunnel_meat_1110', 'assets/images/tiles/ploti4.png');
         this.load.image('tunnel_meat_1111', 'assets/images/tiles/ploti5.png');
+        this.load.image('tunnel_meat_0001', 'assets/images/tiles/ploti6.png');
 
         this.load.image('shroom_meat_1000', 'assets/images/tiles/ploti griby1.png');
         this.load.image('shroom_meat_1100', 'assets/images/tiles/ploti griby2.png');
@@ -112,7 +115,7 @@ export class Preloader extends Scene
 
         this.load.image('rock_ruby', 'assets/images/tiles/rock_ruby.png');
         this.load.image('shell_ruby', 'assets/images/tiles/shell_ruby.png');
-        this.load.image('ploti_ruby', 'assets/images/tiles/ploti_ruby.png');
+        this.load.image('meat_ruby', 'assets/images/tiles/ploti_ruby.png');
 
         // EVENT
         this.load.image('gnome1', 'assets/images/event/gnome1.png');
