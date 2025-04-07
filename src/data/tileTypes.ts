@@ -40,6 +40,14 @@ export const TILE_TYPES = [
         count: 12
     },
     {
+        // ТУПИК
+        tunnelType: '0001',
+        caveType: '0000',
+        biomeType: 'rock',
+        generalType: 'tunnel',
+        count: 5
+    },
+    {
         // ПЕЩЕРА 1 СТОРОНА
         tunnelType: '0000',
         caveType: '1000',
