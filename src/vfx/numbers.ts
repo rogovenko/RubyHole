@@ -7,23 +7,19 @@ export class NumbersVfx {
         this.scene = scene;
     }
 
-    create(x: number, y: number, message: string, color: string = '#fff', time: number = 500): void {
+    create(x: number, y: number, message: string, color: string = '#fff', time: number = 500, offset: number = 0): void {
         // Create the text at the specified position with stroke and centered alignment
-        y = y - 10;
-        x = x - 10;
-        
-        const item = this.scene.add.text(x, y, message, {
-            fontSize: '32px',
-            fontFamily: 'RobotoCondensed-Bold',
+        const item = this.scene.add.text(x, y, "+" + message, {
+            fontSize: '38px',
+            fontFamily: 'GermaniaOne-Regular',
             color: "#fff",
-            stroke: '#000',
-            strokeThickness: 4,
             align: 'center',
             wordWrap: { width: 200, useAdvancedWrap: true }
         });
         item.setOrigin(0.5);
         item.setDepth(600);
 
+        item.x += offset;
         // Set the initial alpha to 0 (invisible)
         item.alpha = 0;
 
@@ -39,7 +35,7 @@ export class NumbersVfx {
                     this.scene.tweens.add({
                         targets: item,
                         alpha: 0,
-                        y: y - 50,
+                        x: x - 20,
                         duration: 1000,
                         ease: 'Power2',
                         onComplete: () => {

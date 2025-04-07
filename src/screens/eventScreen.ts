@@ -47,7 +47,8 @@ export class EventScreen{
             fontSize: '24px',
             fixedWidth: 300,
             align: 'center',
-            wordWrap: { width: 300, useAdvancedWrap: true }
+            wordWrap: { width: 300, useAdvancedWrap: true },
+            fontFamily: 'GermaniaOne-Regular'
         }).setOrigin(0.5)
             .setDepth(5);
         this.eventScreenGroup.add(this.eventScreenText);

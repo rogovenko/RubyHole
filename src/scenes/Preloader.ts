@@ -117,6 +117,9 @@ export class Preloader extends Scene
         this.load.image('shell_ruby', 'assets/images/tiles/shell_ruby.png');
         this.load.image('meat_ruby', 'assets/images/tiles/ploti_ruby.png');
 
+        this.load.image('fog', 'assets/images/tiles/fog.png');
+        this.load.image('fog_top', 'assets/images/tiles/fog_top.png');
+
         // EVENT
         this.load.image('gnome1', 'assets/images/event/gnome1.png');
         this.load.image('gnome2', 'assets/images/event/gnome2.png');

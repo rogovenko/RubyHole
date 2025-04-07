@@ -8,6 +8,11 @@
     src: url('assets/fonts/RobotoCondensed-Regular.ttf');
 }
 
+@font-face {
+    font-family: 'GermaniaOne-Regular';
+    src: url('assets/fonts/GermaniaOne-Regular.ttf');
+}
+
 body, html, canvas, #game-container {
     -webkit-user-select: none;  /* Chrome, Safari, Opera */
     -moz-user-select: none;     /* Firefox */

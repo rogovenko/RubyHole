@@ -7,6 +7,7 @@ import { GetItemVfx } from '../vfx/get_item';
 import { UI } from '../ui';
 import { GameOverScreen } from '../screens/gameOver';
 import { EventScreen } from '../screens/eventScreen';
+import { NumbersVfx } from '../vfx/numbers';
 
 export class Game extends Scene {
     eventEmitter: Phaser.Events.EventEmitter;
@@ -19,7 +20,7 @@ export class Game extends Scene {
     gridRects: Map<string, Phaser.GameObjects.Rectangle> = new Map();
     shadowTiles: Map<string, Phaser.GameObjects.Image> = new Map();
     fogContainer: Phaser.GameObjects.Container;
-    fogTiles: Map<string, Phaser.GameObjects.Rectangle> = new Map();
+    fogTiles: Map<string, Phaser.GameObjects.Image> = new Map();
     deckNumber: Phaser.GameObjects.Text;
     rubyNumber: number = 0;
     eventScreenGroup: Phaser.GameObjects.Group;
@@ -43,6 +44,8 @@ export class Game extends Scene {
     itemVfx: GetItemVfx;
     ui: UI;
     eventScreen: EventScreen;
+    numbersVfx: NumbersVfx;
+    isFirstDeckNumber: boolean = true;
 
     constructor() {
         super('Game');
@@ -50,6 +53,7 @@ export class Game extends Scene {
         this.placedTiles = new Map();
         this.emojiVfx = new EmojiVfx(this);
         this.itemVfx = new GetItemVfx(this);
+        this.numbersVfx = new NumbersVfx(this);
         this.deck = [];
     }
     
@@ -86,8 +90,12 @@ export class Game extends Scene {
     }
 
     addRuby(amount: number) {
+        let offset = this.rubyNumber > 9 ? 20 : 0;
         this.rubyNumber += amount;
-        this.ui.rubyNumberText.setText(this.rubyNumber.toString());
+        this.numbersVfx.create(this.ui.rubyNumberText.x, this.ui.rubyNumberText.y, amount.toString(), '#ffffff', 500, offset);
+        setTimeout(() => {
+            this.ui.rubyNumberText.setText(this.rubyNumber.toString());
+        }, 700);
     }
 
     restartGame() {
@@ -182,7 +190,7 @@ export class Game extends Scene {
             }
         }
 
-        const shadow = this.add.image(630, 250, 'shadow').setDisplaySize(TILE_SIZE*2.5 + 45, TILE_SIZE*2.5 + 45).setOrigin(0.5).setDepth(0);
+        const shadow = this.add.image(625, 250, 'shadow').setDisplaySize(TILE_SIZE*2.5 + 45, TILE_SIZE*2.5 + 45).setOrigin(0.5).setDepth(0);
         // Shuffle and take tiles from the pool
         for (let i = tilePool.length - 1; i > 0; i--) {
             let percent = Math.random() * 100;
@@ -200,9 +208,10 @@ export class Game extends Scene {
 
         this.deck = [...tilePool];
         
-        this.deckNumber = this.add.text(630, 370, this.deck.length.toString(), {
+        this.deckNumber = this.add.text(625, 370, this.deck.length.toString(), {
             color: '#ffffff',
-            fontSize: '20px'
+            fontSize: '38px',
+            fontFamily: 'GermaniaOne-Regular'
         }).setOrigin(0.5);
 
         console.log("arr", arr)
@@ -213,8 +222,13 @@ export class Game extends Scene {
         this.deckNumber.setText(num.toString());
     }
 
-    addTilesToDeck(count: number, checkedTilesArray: string[]) {
+    countMushroomReward(n: number) {
+        return Math.floor((Math.pow(2, n) / 4) + n);
+    }
+
+    addTilesToDeck(n: number, checkedTilesArray: string[]) {
         let addedTiles = [];
+        let count = this.countMushroomReward(n);
         for (let i = 0; i < count; i++) {
             let percent = Math.random() * 100;
             let chance = percent < RUBY_CHANCE;
@@ -234,18 +248,20 @@ export class Game extends Scene {
             if(tileImage){
                 const worldPos = this.mapContainer.getWorldTransformMatrix().transformPoint(tileImage.x, tileImage.y);
                 const tile = addedTiles[index] as unknown as any;
-                let tile_name = "";
-                console.log("tile", tile)
-                console.log("name", tile.generalType + '_' + "rock" + '_' + tile.tunnelType)
-                if(tile === "ruby"){
-                    tile_name = "rock_ruby";
-                }else{
-                    let type = tile.generalType === 'tunnel' ? tile.tunnelType : tile.caveType;
-                    tile_name = tile.generalType + '_' + "rock" + '_' + type;
+                if(tile){
+                    let tile_name = "";
+                    console.log("tile", tile)
+                    console.log("name", tile.generalType + '_' + "rock" + '_' + tile.tunnelType)
+                    if(tile === "ruby"){
+                        tile_name = "rock_ruby";
+                    }else{
+                        let type = tile.generalType === 'tunnel' ? tile.tunnelType : tile.caveType;
+                        tile_name = tile.generalType + '_' + "rock" + '_' + type;
+                    }
+                    setTimeout(() => {
+                        this.itemVfx.create(worldPos.x, worldPos.y, tile_name);
+                    }, 100 * index);
                 }
-                setTimeout(() => {
-                    this.itemVfx.create(worldPos.x, worldPos.y, tile_name);
-                }, 100 * index);
             }
         });
         this.updateDeckNumber();
@@ -295,7 +311,7 @@ export class Game extends Scene {
         }
 
         this.currentTileCode = this.deck.pop()!;
-        const deckX = 630;
+        const deckX = 624;
         const deckY = 250;
 
         console.log("currentTileCode", this.currentTileCode)
@@ -508,6 +524,7 @@ export class Game extends Scene {
 
             // TEST VFX
             // this.itemVfx.create(worldPos.x, worldPos.y, "shroom_rock_1100");
+            // this.numbersVfx.create(this.ui.rubyNumberText.x, this.ui.rubyNumberText.y, "3", '#ffffff', 500);
 
             if(this.currentTileCode.generalType === 'small_ruby'){
                 this.emojiVfx.create(worldPos.x, worldPos.y, 'ruby_icon', 3);
@@ -516,6 +533,7 @@ export class Game extends Scene {
             this.drawNextTile();
         }
 
+        // TODO: переделать на вращение рубика
         if (pointer.rightButtonDown() && this.currentTile) {
             const rotation = this.currentTile.getData('rotation') + 90;
             this.currentTile.setRotation(Phaser.Math.DegToRad(rotation));
@@ -661,7 +679,11 @@ export class Game extends Scene {
         const isComplete = checkTile(tileCode, tile);
         const checkedTilesArray = Array.from(checkedTiles);
         if(isComplete){
-            this.addTilesToDeck(checkedTiles.size, checkedTilesArray);
+            let offset = this.deck.length > 9 ? 40 : 0;
+            this.numbersVfx.create(this.deckNumber.x, this.deckNumber.y, checkedTiles.size.toString(), '#ffffff', 500, offset);
+            setTimeout(() => {
+                this.addTilesToDeck(checkedTiles.size, checkedTilesArray);
+            }, 700);
         }
         return isComplete;
     }
@@ -685,13 +707,12 @@ export class Game extends Scene {
     createFogOfWar() {
         for (let y = this.highestFogRow; y < MAP_HEIGHT; y++) {
             for (let x = 0; x < MAP_WIDTH; x++) {
-                const fogTile = this.add.rectangle(
+                const fogTile = this.add.image(
                     x * TILE_SIZE,
                     y * TILE_SIZE,
-                    TILE_SIZE,
-                    TILE_SIZE,
-                    0x000000
+                    y === this.highestFogRow ? 'fog_top' : 'fog'   
                 ).setOrigin(0);
+                fogTile.setDisplaySize(TILE_SIZE, TILE_SIZE);
                 
                 this.fogContainer.add(fogTile);
                 this.fogTiles.set(`${x},${y}`, fogTile);
@@ -705,18 +726,53 @@ export class Game extends Scene {
         
         // Only update if the new fog row would be higher than current fog row
         if (newFogRow > this.highestFogRow) {
+            // Store fog tiles to be tweened before removing them from the map
+            let tilesToTween: Phaser.GameObjects.Image[] = [];
+            
             // Remove fog tiles from current fog row up to the new fog row
             for (let y = this.highestFogRow; y < newFogRow; y++) {
                 for (let x = 0; x < MAP_WIDTH; x++) {
                     const fogTile = this.fogTiles.get(`${x},${y}`);
                     if (fogTile) {
-                        fogTile.destroy();
+                        // Store the tile before removing it from the map
+                        tilesToTween.push(fogTile);
                         this.fogTiles.delete(`${x},${y}`);
                     }
                 }
             }
+
+            // Tween old fog rows down
+            tilesToTween.forEach(fogTile => {
+                this.tweens.add({
+                    targets: fogTile,
+                    y: fogTile.y + 64,
+                    duration: 300,
+                    ease: 'Power2',
+                    onComplete: () => {
+                        fogTile.destroy();
+                    }
+                });
+            });
+
+            // Update old top row fog tiles to regular fog
+            for (let x = 0; x < MAP_WIDTH; x++) {
+                const oldTopFogTile = this.fogTiles.get(`${x},${this.highestFogRow}`);
+                if (oldTopFogTile) {
+                    oldTopFogTile.setTexture('fog');
+                }
+            }
             
             this.highestFogRow = newFogRow;
+
+            // Create new top row with fog_top texture
+            setTimeout(() => {
+                for (let x = 0; x < MAP_WIDTH; x++) {
+                    const fogTile = this.fogTiles.get(`${x},${this.highestFogRow}`);
+                    if (fogTile) {
+                        fogTile.setTexture('fog_top');
+                    }
+                }
+            }, 200);
         }
     }
 
