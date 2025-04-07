@@ -47,7 +47,6 @@ export class Game extends Scene {
     numbersVfx: NumbersVfx;
     isFirstDeckNumber: boolean = true;
 
-
     constructor() {
         super('Game');
         this.eventEmitter = new Phaser.Events.EventEmitter();
@@ -92,6 +91,9 @@ export class Game extends Scene {
     }
 
     addRuby(amount: number) {
+        if(this.isMusicPlaying){
+            this.sound.play('ruby');
+        }
         let offset = this.rubyNumber > 9 ? 20 : 0;
         this.rubyNumber += amount;
         this.numbersVfx.create(this.ui.rubyNumberText.x, this.ui.rubyNumberText.y, amount.toString(), '#ffffff', 500, offset);
@@ -296,9 +298,6 @@ export class Game extends Scene {
         const y2 = depth;
         const tileType2 = { tunnelType: tunnelType, caveType: '0000', biomeType: biomeType, generalType: 'hole', count: 0, locked: false, x: x2, y: y2 };
         let rotation2 = Math.floor(Math.random() * 4) * 90; // Random rotation in 90 degree increments
-        if(depth === 30){
-            rotation2 = 0;
-        }
         const tile2 = this.add.image(
             x2 * TILE_SIZE + TILE_SIZE / 2,
             y2 * TILE_SIZE + TILE_SIZE / 2,
@@ -498,6 +497,9 @@ export class Game extends Scene {
                     break;
                 }
             }
+            if(y > 30){
+                biomeType = "meat";
+            }
 
             console.log("currentTileCode", this.currentTileCode)
 
@@ -534,7 +536,9 @@ export class Game extends Scene {
             // TEST VFX
             // this.itemVfx.create(worldPos.x, worldPos.y, "shroom_rock_1100");
             // this.numbersVfx.create(this.ui.rubyNumberText.x, this.ui.rubyNumberText.y, "3", '#ffffff', 500);
-
+            if(this.isMusicPlaying){
+                this.sound.play('tile_place');
+            }
 
             if(this.currentTileCode.generalType === 'small_ruby'){
                 this.emojiVfx.create(worldPos.x, worldPos.y, 'ruby_icon', 3);

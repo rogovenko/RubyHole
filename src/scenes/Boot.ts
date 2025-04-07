@@ -19,7 +19,7 @@ export class Boot extends Scene
             }
         }, { passive: false });
         
-        this.load.image('boot_pic', 'assets/background.jpg');
+        this.load.image('boot_pic', 'assets/ui/interface2.png');
     }
 
     create ()

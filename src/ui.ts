@@ -15,7 +15,6 @@ export class UI {
         this.game.add.image(0, 0, 'bg1').setOrigin(0, 0).setDisplaySize(800, 600);
         this.game.cameras.main.setBackgroundColor("#ffffff");
 
-
         let axisX = 625;
         let axisY = 440;
         let offsetY = 25;
@@ -32,6 +31,9 @@ export class UI {
         }).setOrigin(0.5);
 
         buttonNextTile.on('pointerdown', () => {
+            if(this.game.isMusicPlaying){
+                this.game.sound.play('click');
+            }
             if (this.game.currentTile) {
                 this.game.currentTile.destroy();
                 this.game.currentTile = undefined;
@@ -54,6 +56,9 @@ export class UI {
         }).setOrigin(0.5);
 
         buttonRestartGame.on('pointerdown', () => {
+            if(this.game.isMusicPlaying){
+                this.game.sound.play('click');
+            }
             this.game.restartGame();
         });
 
