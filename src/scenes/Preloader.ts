@@ -132,6 +132,9 @@ export class Preloader extends Scene
         this.load.image('gnome1_0', 'assets/images/event/t1.png');
         this.load.image('gnome1_1', 'assets/images/event/t2.png');
         this.load.image('bubble', 'assets/images/event/bubble.png');
+        this.load.image('frame1', 'assets/images/event/frame1.png');
+        this.load.image('frame2', 'assets/images/event/frame2.png');
+        this.load.image('frame3', 'assets/images/event/frame3.png');
 
         // UI
         this.load.image('ruby_icon', 'assets/ui/ruby_icon.png');

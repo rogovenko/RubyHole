@@ -2,6 +2,7 @@ import { eventsData } from "../data/events";
 import { Game } from "../scenes/Game";
 import { Dialogue } from "../types";
 import { GameWinScreen } from "./gameWin";
+import { StoryScreen } from "./storyScreen";
 
 export class EventScreen{
     game: Game;
@@ -20,7 +21,6 @@ export class EventScreen{
         this.eventScreenGroup = this.game.add.group();
         const eventScreen = this.game.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive().setDepth(5);
         this.eventScreenGroup.add(eventScreen);
-
 
         let textClickAnywhere = this.game.add.text(400, 570, 'Click anywhere to continue', {
             color: '#745b44',
@@ -83,7 +83,8 @@ export class EventScreen{
         if (this.currentDialogue.length === 0){
             this.eventScreenGroup.setVisible(false);
             if(this.game.currentLevel === 3){
-                new GameWinScreen(this.game);
+                this.eventScreenGroup.setVisible(false);
+                this.game.startStoryScreen();
             }
             return;
         }
