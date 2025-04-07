@@ -21,33 +21,46 @@ export class EventScreen{
         const eventScreen = this.game.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive().setDepth(5);
         this.eventScreenGroup.add(eventScreen);
 
-        this.characterLeft = this.game.add.image(400, 300, 'gnome1')
-            .setScale(0.5)
+
+        let textClickAnywhere = this.game.add.text(400, 570, 'Click anywhere to continue', {
+            color: '#745b44',
+            fontSize: '20px',
+            fontFamily: 'GermaniaOne-Regular'
+        }).setOrigin(0.5).setDepth(6);
+        this.eventScreenGroup.add(textClickAnywhere);
+
+        let scale = 0.28;
+
+        this.characterLeft = this.game.add.image(400, 200, 'gnome1_0')
+            .setScale(scale)
             .setDepth(5);
         this.eventScreenGroup.add(this.characterLeft);
 
-        this.characterRight = this.game.add.image(400, 300, 'gnome2')
-            .setScale(0.5)
+        this.characterRight = this.game.add.image(400, 200, 'gnome2_0')
+            .setScale(scale)
             .setDepth(5);
         this.eventScreenGroup.add(this.characterRight);
 
         Phaser.Display.Align.In.Center(this.characterLeft, eventScreen);
         Phaser.Display.Align.In.Center(this.characterRight, eventScreen);
-        this.characterLeft.x -= 500;
-        this.characterRight.x += 100;
-        this.characterLeft.y -= 50;
-        this.characterRight.y -= 50;
 
-        this.bubble = this.game.add.image(400, 400, 'bubble')
-            .setDepth(5);
+        this.characterLeft.x -= 400;
+        this.characterRight.x += 0;
+        this.characterLeft.y -= 250;
+        this.characterRight.y -= 250;
+
+        this.bubble = this.game.add.image(400, 450, 'bubble')
+            .setDepth(5)
+            .setScale(0.69);
         this.eventScreenGroup.add(this.bubble);
 
-        this.eventScreenText = this.game.add.text(400, 400, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', {
-            color: '#000000',
-            fontSize: '24px',
-            fixedWidth: 300,
+        this.eventScreenText = this.game.add.text(400, 475, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', {
+            color: '#fff',
+            fontSize: '32px',
+            fixedWidth: 600,
             align: 'center',
-            wordWrap: { width: 300, useAdvancedWrap: true }
+            wordWrap: { width: 600, useAdvancedWrap: true },
+            fontFamily: 'GermaniaOne-Regular'
         }).setOrigin(0.5)
             .setDepth(5);
         this.eventScreenGroup.add(this.eventScreenText);
@@ -77,11 +90,26 @@ export class EventScreen{
         const dialogue = this.currentDialogue.shift();
         if (!dialogue) return;
         this.eventScreenText.setText(dialogue.text[this.game.currentLang]);
-        const centerX = (this.characterLeft.x + this.characterRight.x) / 2;
+
         if(dialogue.character !== 'left'){
-            this.bubble.setScale(-1, 1);
+            this.bubble.setScale(0.69 * -1, this.bubble.scaleY);
         }else{
-            this.bubble.setScale(1, 1);
+            this.bubble.setScale(0.69 * 1, this.bubble.scaleY);
         }
+
+        if(dialogue.typeLeft === '0'){
+            this.characterLeft.setTexture('gnome1_0');
+        }else{
+            this.characterLeft.setTexture('gnome1_1');
+        }
+
+        if(dialogue.typeRight === '0'){
+            this.characterRight.setTexture('gnome2_0');
+        }else{
+            this.characterRight.setTexture('gnome2_1');
+        }
+        
+        
+
     }
 }

@@ -17,7 +17,10 @@ export class GameWinScreen{
 
         let gameWinScreenText = this.game.add.text(400, 100, textData.gameWin[this.game.currentLang], {
             color: '#ffffff',
-            fontSize: '48px'
+
+            fontSize: '48px',
+            fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5).setDepth(5);
         this.gameWinScreenGroup.add(gameWinScreenText);
 
@@ -26,7 +29,10 @@ export class GameWinScreen{
             fontSize: '24px',
             fixedWidth: 300,
             align: 'center',
-            wordWrap: { width: 300, useAdvancedWrap: true }
+
+            wordWrap: { width: 300, useAdvancedWrap: true },
+            fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5).setDepth(5);
         this.gameWinScreenGroup.add(textForWinner);
 
@@ -41,7 +47,10 @@ export class GameWinScreen{
             fontSize: '30px',
             fixedWidth: 300,
             align: 'center',
-            wordWrap: { width: 300, useAdvancedWrap: true }
+
+            wordWrap: { width: 300, useAdvancedWrap: true },
+            fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5).setDepth(5);
         this.gameWinScreenGroup.add(this.gameWinRubyNumber);
 
@@ -52,7 +61,10 @@ export class GameWinScreen{
 
         let buttonRestartGameText = this.game.add.text(400, 400, 'RESTART', {
             color: '#ffffff',
-            fontSize: '20px'
+
+            fontSize: '20px',
+            fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5).setDepth(5);
         this.gameWinScreenGroup.add(buttonRestartGameText);
 
