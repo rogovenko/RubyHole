@@ -46,6 +46,7 @@ export class Game extends Scene {
     numbersVfx: NumbersVfx;
     isFirstDeckNumber: boolean = true;
     storyScreen: StoryScreen;
+    eventOn: boolean = false;
     constructor() {
         super('Game');
         this.eventEmitter = new Phaser.Events.EventEmitter();
@@ -473,6 +474,7 @@ export class Game extends Scene {
     }
 
     handlePointerDown(pointer: Phaser.Input.Pointer) {
+        if(this.eventOn) return;
         if (pointer.leftButtonDown() && this.currentTile) {
             const x = Math.floor(pointer.worldX / TILE_SIZE);
             const y = Math.floor((pointer.worldY + this.scrollOffsetY) / TILE_SIZE);
