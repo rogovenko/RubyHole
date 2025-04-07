@@ -17,8 +17,10 @@ export class GameOverScreen{
 
         let gaveOverScreenText = this.game.add.text(400, 100, textData.gameOver[this.game.currentLang], {
             color: '#ffffff',
+
             fontSize: '48px',
             fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5).setDepth(5);
         this.gameOverScreenGroup.add(gaveOverScreenText);
 
@@ -27,8 +29,10 @@ export class GameOverScreen{
             fontSize: '24px',
             fixedWidth: 300,
             align: 'center',
+
             wordWrap: { width: 300, useAdvancedWrap: true },
             fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5).setDepth(5);
         this.gameOverScreenGroup.add(textForLoser);
 
@@ -43,8 +47,10 @@ export class GameOverScreen{
             fontSize: '30px',
             fixedWidth: 300,
             align: 'center',
+
             wordWrap: { width: 300, useAdvancedWrap: true },
             fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5).setDepth(5);
         this.gameOverScreenGroup.add(this.gameOverRubyNumber);
 
@@ -55,8 +61,10 @@ export class GameOverScreen{
 
         let buttonRestartGameText = this.game.add.text(400, 400, 'RESTART', {
             color: '#ffffff',
+
             fontSize: '20px',
             fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5).setDepth(5);
         this.gameOverScreenGroup.add(buttonRestartGameText);
 

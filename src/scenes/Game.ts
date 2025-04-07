@@ -47,6 +47,7 @@ export class Game extends Scene {
     numbersVfx: NumbersVfx;
     isFirstDeckNumber: boolean = true;
 
+
     constructor() {
         super('Game');
         this.eventEmitter = new Phaser.Events.EventEmitter();
@@ -54,6 +55,7 @@ export class Game extends Scene {
         this.emojiVfx = new EmojiVfx(this);
         this.itemVfx = new GetItemVfx(this);
         this.numbersVfx = new NumbersVfx(this);
+
         this.deck = [];
     }
     
@@ -96,6 +98,7 @@ export class Game extends Scene {
         setTimeout(() => {
             this.ui.rubyNumberText.setText(this.rubyNumber.toString());
         }, 700);
+
     }
 
     restartGame() {
@@ -229,6 +232,7 @@ export class Game extends Scene {
     addTilesToDeck(n: number, checkedTilesArray: string[]) {
         let addedTiles = [];
         let count = this.countMushroomReward(n);
+
         for (let i = 0; i < count; i++) {
             let percent = Math.random() * 100;
             let chance = percent < RUBY_CHANCE;
@@ -248,6 +252,7 @@ export class Game extends Scene {
             if(tileImage){
                 const worldPos = this.mapContainer.getWorldTransformMatrix().transformPoint(tileImage.x, tileImage.y);
                 const tile = addedTiles[index] as unknown as any;
+
                 if(tile){
                     let tile_name = "";
                     console.log("tile", tile)
@@ -262,6 +267,7 @@ export class Game extends Scene {
                         this.itemVfx.create(worldPos.x, worldPos.y, tile_name);
                     }, 100 * index);
                 }
+
             }
         });
         this.updateDeckNumber();
@@ -529,6 +535,7 @@ export class Game extends Scene {
             // this.itemVfx.create(worldPos.x, worldPos.y, "shroom_rock_1100");
             // this.numbersVfx.create(this.ui.rubyNumberText.x, this.ui.rubyNumberText.y, "3", '#ffffff', 500);
 
+
             if(this.currentTileCode.generalType === 'small_ruby'){
                 this.emojiVfx.create(worldPos.x, worldPos.y, 'ruby_icon', 3);
                 this.addRuby(3);
@@ -687,6 +694,7 @@ export class Game extends Scene {
             setTimeout(() => {
                 this.addTilesToDeck(checkedTiles.size, checkedTilesArray);
             }, 700);
+
         }
         return isComplete;
     }
@@ -787,6 +795,7 @@ export class Game extends Scene {
         } else {
             this.backgroundMusic.pause();
             this.ui.musicButton.setTexture('button_off'); // Серый цвет (выключено)
+
         }
     }
 }
