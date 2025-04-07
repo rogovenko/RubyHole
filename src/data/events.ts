@@ -56,7 +56,7 @@ export const eventsData: Record<number, EventData> = {
                     ru: '',
                     hint: ''
                 },
-                character: 'left',
+                character: 'right',
                 typeLeft: '0',
                 typeRight: '1'
             },
@@ -66,7 +66,7 @@ export const eventsData: Record<number, EventData> = {
                     ru: '',
                     hint: ''
                 },
-                character: 'right',
+                character: 'left',
                 typeLeft: '0',
                 typeRight: '0'
             },
@@ -76,7 +76,7 @@ export const eventsData: Record<number, EventData> = {
                     ru: '',
                     hint: ''
                 },
-                character: 'left',
+                character: 'right',
                 typeLeft: '1',
                 typeRight: '1'
             },
@@ -86,7 +86,7 @@ export const eventsData: Record<number, EventData> = {
                     ru: '',
                     hint: ''
                 },
-                character: 'right',
+                character: 'left',
                 typeLeft: '0',
                 typeRight: '0'
             }

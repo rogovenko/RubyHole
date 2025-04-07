@@ -5,6 +5,8 @@ export class Preloader extends Scene
 {
     private fontsLoaded: boolean;
     private lang: string = 'en';  // Add default value
+    private loader: Phaser.GameObjects.Rectangle;
+    private bar: Phaser.GameObjects.Rectangle;
 
     constructor ()
     {
@@ -14,29 +16,30 @@ export class Preloader extends Scene
 
     init ()
     {
-        this.add.image(this.scale.width / 2, this.scale.height / 2, 'boot_pic');
+        this.add.image(this.scale.width / 2, this.scale.height / 2, 'boot_pic').setScale(0.67);
         
         // далее лоадер, но он пока не нужен
-        // const x = 360
-        // const y = 1100
-        // this.add.rectangle(x, y, 468, 32).setStrokeStyle(1, 0xffffff);
+
+        this.loader = this.add.rectangle(this.scale.width / 2, this.scale.height / 2, 468, 32).setStrokeStyle(1, 0xffffff);
 
         
         //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-        // const bar = this.add.rectangle(x-230, y, 4, 28, 0xffffff);
+        this.bar = this.add.rectangle(this.loader.x-230, this.loader.y, 4, 28, 0xffffff);
         
         //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
-        // this.load.on('progress', (progress: number) => {
-        //     //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
-        //     bar.width = 4 + (460 * progress);
-        // });
+        this.load.on('progress', (progress: number) => {
+            //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
+            this.bar.width = 4 + (460 * progress);
+        });
     }
 
     preload ()
     {
         this.load.on('complete', () => {
+            this.loader.destroy();
+            this.bar.destroy();
             this.fontsLoaded = true;
-            const startButton = this.add.rectangle(this.scale.width / 2, this.scale.height / 2, 400, 80, 0x9966ff)
+            const startButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'button').setScale(1.2);
             startButton.setInteractive();
 
             const startText = this.add.text(this.scale.width / 2, this.scale.height / 2, this.lang === "ru" ? "Нажмите, чтобы начать" : "Press to start", {
@@ -55,6 +58,9 @@ export class Preloader extends Scene
 
         // Загрузка фоновой музыки
         this.load.audio('background_music', 'assets/audio/background.mp3');
+        this.load.audio('ruby', 'assets/audio/ruby.mp3');
+        this.load.audio('click', 'assets/audio/click.mp3');
+        this.load.audio('tile_place', 'assets/audio/tile_place.mp3');
 
         // TILES
         this.load.image('tunnel_rock_0000', 'assets/images/tiles/kamni1.png');
@@ -107,7 +113,7 @@ export class Preloader extends Scene
 
         this.load.image('hole_meat_0000', 'assets/images/tiles/hole1.png');
         this.load.image('hole_meat_0100', 'assets/images/tiles/hole2.png');
-        this.load.image('hole_meat_1100', 'assets/images/tiles/hole3.png');
+        this.load.image('hole_meat_1100', 'assets/images/tiles/ploti hole.png');
         this.load.image('hole_meat_0111', 'assets/images/tiles/hole4.png');
         this.load.image('hole_meat_1111', 'assets/images/tiles/hole5.png');
 
@@ -119,7 +125,6 @@ export class Preloader extends Scene
 
         this.load.image('fog', 'assets/images/tiles/fog.png');
         this.load.image('fog_top', 'assets/images/tiles/fog_top.png');
-
 
         // EVENT
         this.load.image('gnome2_0', 'assets/images/event/b1.png');
