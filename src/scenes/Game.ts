@@ -289,7 +289,10 @@ export class Game extends Scene {
         const x2 = Math.floor(Math.random() * 7);
         const y2 = depth;
         const tileType2 = { tunnelType: tunnelType, caveType: '0000', biomeType: biomeType, generalType: 'hole', count: 0, locked: false, x: x2, y: y2 };
-        const rotation2 = Math.floor(Math.random() * 4) * 90; // Random rotation in 90 degree increments
+        let rotation2 = Math.floor(Math.random() * 4) * 90; // Random rotation in 90 degree increments
+        if(depth === 30){
+            rotation2 = 0;
+        }
         const tile2 = this.add.image(
             x2 * TILE_SIZE + TILE_SIZE / 2,
             y2 * TILE_SIZE + TILE_SIZE / 2,

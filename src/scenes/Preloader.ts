@@ -107,7 +107,7 @@ export class Preloader extends Scene
 
         this.load.image('hole_meat_0000', 'assets/images/tiles/hole1.png');
         this.load.image('hole_meat_0100', 'assets/images/tiles/hole2.png');
-        this.load.image('hole_meat_1100', 'assets/images/tiles/hole3.png');
+        this.load.image('hole_meat_1100', 'assets/images/tiles/ploti hole.png'); // here
         this.load.image('hole_meat_0111', 'assets/images/tiles/hole4.png');
         this.load.image('hole_meat_1111', 'assets/images/tiles/hole5.png');
 
