@@ -37,7 +37,7 @@ export const TILE_TYPES = [
         caveType: '0000',
         biomeType: 'rock',
         generalType: 'tunnel',
-        count: 120
+        count: 12
     },
     {
         // ТУПИК
