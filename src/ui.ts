@@ -3,7 +3,9 @@ import { Game } from "./scenes/Game";
 export class UI {
     game: Game;
     rubyNumberText: Phaser.GameObjects.Text;
+
     musicButton: Phaser.GameObjects.Image;
+
     constructor(game: Game) {
         this.game = game;
         this.create();
@@ -12,6 +14,7 @@ export class UI {
     create() {
         this.game.add.image(0, 0, 'bg1').setOrigin(0, 0).setDisplaySize(800, 600);
         this.game.cameras.main.setBackgroundColor("#ffffff");
+
 
         let axisX = 625;
         let axisY = 440;
@@ -25,6 +28,7 @@ export class UI {
             color: '#ffffff',
             fontSize: '20px',
             fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5);
 
         buttonNextTile.on('pointerdown', () => {
@@ -36,6 +40,7 @@ export class UI {
         });
 
         axisY += offsetY;
+
         const buttonRestartGame = this.game.add.image(axisX, axisY + offsetY, 'button')
             .setInteractive()
             .setOrigin(0.5)
@@ -45,6 +50,7 @@ export class UI {
             color: '#ffffff',
             fontSize: '20px',
             fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5);
 
         buttonRestartGame.on('pointerdown', () => {
@@ -53,6 +59,7 @@ export class UI {
 
         // Создание кнопки управления музыкой
         axisY += offsetY;
+
         const musicButtonBg = this.game.add.image(axisX, axisY + offsetY*2, 'button')
             .setInteractive()
             .setOrigin(0.5)
@@ -62,6 +69,7 @@ export class UI {
             color: '#ffffff',
             fontSize: '20px',
             fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5)
         
         this.musicButton = musicButtonBg;
@@ -77,10 +85,12 @@ export class UI {
 
         this.rubyNumberText = this.game.add.text(690, 80, '0', {
             color: '#ffffff',
+
             fontSize: '38px',   
             align: 'left',
             fixedWidth: 100,
             fontFamily: 'GermaniaOne-Regular'
+
         }).setOrigin(0.5);
     }
     

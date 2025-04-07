@@ -120,6 +120,7 @@ export class Preloader extends Scene
         this.load.image('fog', 'assets/images/tiles/fog.png');
         this.load.image('fog_top', 'assets/images/tiles/fog_top.png');
 
+
         // EVENT
         this.load.image('gnome2_0', 'assets/images/event/b1.png');
         this.load.image('gnome2_1', 'assets/images/event/b2.png');

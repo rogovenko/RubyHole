@@ -21,6 +21,7 @@ export class EventScreen{
         const eventScreen = this.game.add.image(0, 0, 'bg2').setOrigin(0, 0).setDisplaySize(800, 600).setInteractive().setDepth(5);
         this.eventScreenGroup.add(eventScreen);
 
+
         let textClickAnywhere = this.game.add.text(400, 570, 'Click anywhere to continue', {
             color: '#745b44',
             fontSize: '20px',
@@ -42,6 +43,7 @@ export class EventScreen{
 
         Phaser.Display.Align.In.Center(this.characterLeft, eventScreen);
         Phaser.Display.Align.In.Center(this.characterRight, eventScreen);
+
         this.characterLeft.x -= 400;
         this.characterRight.x += 0;
         this.characterLeft.y -= 250;
@@ -88,6 +90,7 @@ export class EventScreen{
         const dialogue = this.currentDialogue.shift();
         if (!dialogue) return;
         this.eventScreenText.setText(dialogue.text[this.game.currentLang]);
+
         if(dialogue.character !== 'left'){
             this.bubble.setScale(0.69 * -1, this.bubble.scaleY);
         }else{
@@ -107,5 +110,6 @@ export class EventScreen{
         }
         
         
+
     }
 }
