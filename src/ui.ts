@@ -3,7 +3,7 @@ import { Game } from "./scenes/Game";
 export class UI {
     game: Game;
     rubyNumberText: Phaser.GameObjects.Text;
-    musicButton: Phaser.GameObjects.Rectangle;
+    musicButton: Phaser.GameObjects.Image;
     constructor(game: Game) {
         this.game = game;
         this.create();
@@ -16,9 +16,10 @@ export class UI {
         let axisX = 625;
         let axisY = 440;
         let offsetY = 25;
-        const buttonNextTile = this.game.add.rectangle(axisX, axisY, 120, 40, 0x4a90e2)
+        const buttonNextTile = this.game.add.image(axisX, axisY, 'button')
             .setInteractive()
-            .setOrigin(0.5);
+            .setOrigin(0.5)
+            .setScale(0.6);
             
         const buttonNextTileText = this.game.add.text(axisX, axisY, 'NEXT TILE', {
             color: '#ffffff',
@@ -35,9 +36,10 @@ export class UI {
         });
 
         axisY += offsetY;
-        const buttonRestartGame = this.game.add.rectangle(axisX, axisY + offsetY, 120, 40, 0x4a90e2)
+        const buttonRestartGame = this.game.add.image(axisX, axisY + offsetY, 'button')
             .setInteractive()
-            .setOrigin(0.5);
+            .setOrigin(0.5)
+            .setScale(0.6);
             
         const buttonRestartGameText = this.game.add.text(axisX, axisY + offsetY, 'RESTART', {
             color: '#ffffff',
@@ -51,8 +53,10 @@ export class UI {
 
         // Создание кнопки управления музыкой
         axisY += offsetY;
-        const musicButtonBg = this.game.add.rectangle(axisX, axisY + offsetY*2, 120, 40, 0x4a90e2)
+        const musicButtonBg = this.game.add.image(axisX, axisY + offsetY*2, 'button')
             .setInteractive()
+            .setOrigin(0.5)
+            .setScale(0.6);
 
         const musicButtonText = this.game.add.text(axisX, axisY + offsetY*2, 'MUSIC', {
             color: '#ffffff',

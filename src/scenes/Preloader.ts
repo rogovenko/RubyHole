@@ -121,8 +121,10 @@ export class Preloader extends Scene
         this.load.image('fog_top', 'assets/images/tiles/fog_top.png');
 
         // EVENT
-        this.load.image('gnome1', 'assets/images/event/gnome1.png');
-        this.load.image('gnome2', 'assets/images/event/gnome2.png');
+        this.load.image('gnome2_0', 'assets/images/event/b1.png');
+        this.load.image('gnome2_1', 'assets/images/event/b2.png');
+        this.load.image('gnome1_0', 'assets/images/event/t1.png');
+        this.load.image('gnome1_1', 'assets/images/event/t2.png');
         this.load.image('bubble', 'assets/images/event/bubble.png');
 
         // UI
@@ -132,6 +134,9 @@ export class Preloader extends Scene
         this.load.image('bg2', 'assets/ui/interface2.png');
         this.load.image('shadow', 'assets/ui/shadow.png');
         this.load.image('bg_gnomes', 'assets/ui/background.png');
+        this.load.image('button', 'assets/ui/button.png');
+        this.load.image('button_off', 'assets/ui/button_off.png');
+        
 
         // ANIMATIONS
         // this.load.atlas('time', 'assets/anim/time.png', 'assets/anim/time.json');

@@ -86,7 +86,7 @@ export class Game extends Scene {
         this.drawNextTile();
         this.eventScreen = new EventScreen(this);
         this.input.on('pointermove', this.handlePointerMove, this);
-        // this.launchEventScreen(1)
+        this.eventScreen.launch(0);
     }
 
     addRuby(amount: number) {
@@ -223,7 +223,7 @@ export class Game extends Scene {
     }
 
     countMushroomReward(n: number) {
-        return Math.floor((Math.pow(2, n) / 4) + n);
+        return Math.ceil((Math.pow(2, n) / 4) + n);
     }
 
     addTilesToDeck(n: number, checkedTilesArray: string[]) {
@@ -780,10 +780,10 @@ export class Game extends Scene {
         this.isMusicPlaying = !this.isMusicPlaying;
         if (this.isMusicPlaying) {
             this.backgroundMusic.play();
-            this.ui.musicButton.setFillStyle(0x4a90e2); // Синий цвет (включено)
+            this.ui.musicButton.setTexture('button'); // Синий цвет (включено)
         } else {
             this.backgroundMusic.pause();
-            this.ui.musicButton.setFillStyle(0x666666); // Серый цвет (выключено)
+            this.ui.musicButton.setTexture('button_off'); // Серый цвет (выключено)
         }
     }
 }

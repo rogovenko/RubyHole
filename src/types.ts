@@ -24,6 +24,8 @@ export interface EventData {
 export interface Dialogue {
     text: TextLang;
     character: string;
+    typeLeft: string;
+    typeRight: string;
 }
 
 export interface TextLang {

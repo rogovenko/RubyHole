@@ -12,7 +12,7 @@ export class NumbersVfx {
         const item = this.scene.add.text(x, y, "+" + message, {
             fontSize: '38px',
             fontFamily: 'GermaniaOne-Regular',
-            color: "#fff",
+            color: "#e1d5bf",
             align: 'center',
             wordWrap: { width: 200, useAdvancedWrap: true }
         });
