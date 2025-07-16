@@ -3,7 +3,8 @@ import { Game } from "./scenes/Game";
 export class UI {
     game: Game;
     rubyNumberText: Phaser.GameObjects.Text;
-
+    questText: Phaser.GameObjects.Text;
+    questText2: Phaser.GameObjects.Text;
     musicButton: Phaser.GameObjects.Image;
 
     constructor(game: Game) {
@@ -84,11 +85,11 @@ export class UI {
         });
 
         // РУБИНЫ!
-        this.game.add.image(600, 80, 'ruby_icon')
+        this.game.add.image(600, 60, 'ruby_icon')
             .setScale(0.5)
             .setOrigin(0.5);
 
-        this.rubyNumberText = this.game.add.text(690, 80, '0', {
+        this.rubyNumberText = this.game.add.text(690, 60, '0', {
             color: '#ffffff',
 
             fontSize: '38px',   
@@ -97,6 +98,28 @@ export class UI {
             fontFamily: 'GermaniaOne-Regular'
 
         }).setOrigin(0.5);
+
+        this.questText = this.game.add.text(625, 115, 'Dig as deep as you can!', {
+            color: '#ffffff',
+
+            fontSize: '20px',   
+            align: 'center',
+            fixedWidth: 300,
+            fontFamily: 'GermaniaOne-Regular'
+
+        }).setOrigin(0.5);
+
+        this.questText2 = this.game.add.text(625, 155, 'Dig mushroom caves to get more tiles!', {
+            color: '#ffffff',
+
+            fontSize: '20px',   
+            align: 'center',
+            fixedWidth: 300,
+            fontFamily: 'GermaniaOne-Regular'
+
+        }).setOrigin(0.5);
+
+        this.game.add.image(615, 275, 'hints').setScale(0.65).setOrigin(0.5);
     }
     
 }

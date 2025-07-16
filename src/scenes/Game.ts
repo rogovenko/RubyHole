@@ -208,7 +208,9 @@ export class Game extends Scene {
             }
         }
 
-        const shadow = this.add.image(625, 250, 'shadow').setDisplaySize(TILE_SIZE*2.5 + 45, TILE_SIZE*2.5 + 45).setOrigin(0.5).setDepth(0);
+        const shadow = this.add.image(625, 275, 'shadow').setDisplaySize(TILE_SIZE*1.5 + 45, TILE_SIZE*1.5 + 45).setOrigin(0.5).setDepth(0);
+        shadow.setAlpha(0.5);
+        
         // Shuffle and take tiles from the pool
         for (let i = tilePool.length - 1; i > 0; i--) {
             let percent = Math.random() * 100;
@@ -223,6 +225,11 @@ export class Game extends Scene {
                 arr.push("no ruby");
             }
         }
+
+        shadow.setInteractive();
+        shadow.on('pointerdown', () => {
+            this.rotateTile(null);
+        });
 
         this.deck = [...tilePool];
         
@@ -331,7 +338,7 @@ export class Game extends Scene {
 
         this.currentTileCode = this.deck.pop()!;
         const deckX = 624;
-        const deckY = 250;
+        const deckY = 275;
 
         // определяем это пещеры или туннели
         let currentCode = "0000"
@@ -363,7 +370,7 @@ export class Game extends Scene {
         //     .setFillStyle(0x000000, 0);
         // tileBorder.setDepth(0);
 
-        this.currentTile.setDisplaySize(TILE_SIZE*2.5, TILE_SIZE*2.5);
+        this.currentTile.setDisplaySize(TILE_SIZE*1.5, TILE_SIZE*1.5);
         this.currentTile.setData('type', this.currentTileCode);
         this.currentTile.setData('rotation', 0);
 
@@ -555,11 +562,19 @@ export class Game extends Scene {
         }
 
         // TODO: переделать на вращение рубика
-        if (pointer.rightButtonDown() && this.currentTile) {
+        if (pointer.rightButtonDown()) {
+            this.rotateTile(pointer);
+        }
+    }
+
+    rotateTile(pointer: Phaser.Input.Pointer | null = null){
+        if(this.currentTile){
             const rotation = this.currentTile.getData('rotation') + 90;
             this.currentTile.setRotation(Phaser.Math.DegToRad(rotation));
             this.currentTile.setData('rotation', rotation % 360);
-            this.updateHoverHighlight(pointer);
+            if(pointer){
+                this.updateHoverHighlight(pointer);
+            }
         }
     }
 
