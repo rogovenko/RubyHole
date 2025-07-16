@@ -145,6 +145,7 @@ export class Preloader extends Scene
         this.load.image('bg_gnomes', 'assets/ui/background.png');
         this.load.image('button', 'assets/ui/button.png');
         this.load.image('button_off', 'assets/ui/button_off.png');
+        this.load.image('hints', 'assets/ui/hints.png');
         
 
         // ANIMATIONS
